@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User & Admin Dashboard - KrishiConnect</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-light">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg krishi-navbar sticky-top py-3">
+    <div class="container">
+      <a class="navbar-brand brand-logo" href="../index.html">
+        <span class="p-2 rounded-3 bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center">
+          <i class="bi bi-flower1"></i>
+        </span>
+        <span>Krishi<span style="color:#e76f51;">Connect</span></span>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#krishiNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="krishiNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="land-search.html">Find Land</a></li>
+          <li class="nav-item"><a class="nav-link" href="marketplace.html">Agri Market</a></li>
+          <li class="nav-item"><a class="nav-link" href="mandi-prices.html">Mandi Rates</a></li>
+          <li class="nav-item"><a class="nav-link" href="agreements.html">Agreements</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        </ul>
+        <div id="navUserArea"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- User Greeting Banner with Logout and Role Switch -->
+  <div class="bg-success text-white py-4" style="background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2" id="dashRoleBadge">Role Dashboard</span>
+          <h2 class="fw-bold mb-1" id="dashGreeting">Welcome Back</h2>
+          <p class="text-white-50 mb-0" id="dashSub">Manage your lands, cultivation proposals, product sales, and agreements.</p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-2 mt-md-0">
+          <button class="btn btn-outline-light rounded-pill px-3" onclick="switchRoleQuickly()">
+            <i class="bi bi-arrow-repeat me-1"></i> Switch Role View
+          </button>
+          <button class="btn btn-danger rounded-pill px-3 fw-bold" onclick="logoutUser()">
+            <i class="bi bi-box-arrow-right me-1"></i> Log Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-5">
+
+    <!-- Profile Summary & Saved Onboarding Questionnaire Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+      <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 pb-2 border-bottom">
+        <div class="d-flex align-items-center gap-3">
+          <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle fs-3">
+            <i class="bi bi-person-badge"></i>
+          </div>
+          <div>
+            <h5 class="fw-bold text-dark mb-0" id="profileNameDisplay">User Profile</h5>
+            <small class="text-muted" id="profileContactDisplay">Contact details</small>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-2 mt-md-0">
+          <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill fw-bold">
+            <i class="bi bi-patch-check-fill me-1"></i> Onboarding Completed
+          </span>
+          <a href="login.html" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-pencil-square me-1"></i> Re-take Questionnaire
+          </a>
+        </div>
+      </div>
+
+      <!-- Saved Questionnaire Answers Grid -->
+      <h6 class="fw-bold text-success mb-2"><i class="bi bi-check2-circle me-1"></i>Your Saved Onboarding Preferences (Configured on Login):</h6>
+      <div class="row g-2" id="profileAnswersGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Key Statistics Metrics (2x2 Grid on Mobile Phone Ratio) -->
+    <div class="row g-3 g-md-4 mb-4 dash-stats-row">
+      <div class="col-6 col-md-3">
+        <div class="stat-widget">
+          <div class="text-muted small fw-semibold text-uppercase">Listed Lands</div>
+          <div class="display-6 fw-bold text-dark my-1" id="statLands">6</div>
+          <div class="text-success small"><i class="bi bi-geo-alt-fill me-1"></i>Active Farmlands</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-widget" style="border-left-color: #0284c7;">
+          <div class="text-muted small fw-semibold text-uppercase">Cultivation Requests</div>
+          <div class="display-6 fw-bold text-dark my-1" id="statReqs">1</div>
+          <div class="text-primary small"><i class="bi bi-inbox-fill me-1"></i>Applications from Farmers</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-widget" style="border-left-color: #e76f51;">
+          <div class="text-muted small fw-semibold text-uppercase">Active Agreements</div>
+          <div class="display-6 fw-bold text-dark my-1" id="statAgreements">1</div>
+          <div class="text-danger small"><i class="bi bi-shield-check me-1"></i>Recorded Legal Terms</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-widget" style="border-left-color: #7e22ce;">
+          <div class="text-muted small fw-semibold text-uppercase">Marketplace Orders</div>
+          <div class="display-6 fw-bold text-dark my-1" id="statOrders">0</div>
+          <div class="text-purple small" style="color:#7e22ce;"><i class="bi bi-bag-check-fill me-1"></i>Produce Sales</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Management Modules Navigation Tabs -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+      <ul class="nav nav-pills mb-4 gap-2 d-flex flex-wrap" id="pills-tab" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active rounded-pill px-3 px-md-4" id="pills-requests-tab" data-bs-toggle="pill" data-bs-target="#pills-requests">
+            <i class="bi bi-inbox me-1"></i> Cultivation Proposals
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link rounded-pill px-3 px-md-4" id="pills-lands-tab" data-bs-toggle="pill" data-bs-target="#pills-lands">
+            <i class="bi bi-grid me-1"></i> Land Parcel Directory
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link rounded-pill px-3 px-md-4" id="pills-orders-tab" data-bs-toggle="pill" data-bs-target="#pills-orders">
+            <i class="bi bi-cart3 me-1"></i> Marketplace Orders
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link rounded-pill px-3 px-md-4" id="pills-admin-tab" data-bs-toggle="pill" data-bs-target="#pills-admin">
+            <i class="bi bi-shield-lock me-1"></i> Admin Verification Desk
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="pills-tabContent">
+        <!-- 1. Cultivation Requests Tab -->
+        <div class="tab-pane fade show active" id="pills-requests">
+          <h5 class="fw-bold mb-3">Incoming Land Cultivation Proposals</h5>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Req ID</th>
+                  <th>Land Target</th>
+                  <th>Applicant Farmer</th>
+                  <th>Intended Crops</th>
+                  <th>Proposed Tenure</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="dashRequestsTable">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2. Land Directory Tab -->
+        <div class="tab-pane fade" id="pills-lands">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Managed Agricultural Lands (6 Listed)</h5>
+            <a href="land-search.html" class="btn btn-sm btn-outline-success rounded-pill">
+              <i class="bi bi-plus-circle me-1"></i> Add New Parcel
+            </a>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Land ID</th>
+                  <th>Parcel Title</th>
+                  <th>Owner Name</th>
+                  <th>District / State</th>
+                  <th>Area</th>
+                  <th>Verification</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="dashLandsTable">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3. Orders Tab -->
+        <div class="tab-pane fade" id="pills-orders">
+          <h5 class="fw-bold mb-3">Direct Produce Purchase Orders</h5>
+          <div id="dashOrdersContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- 4. Admin Verification Desk Tab -->
+        <div class="tab-pane fade" id="pills-admin">
+          <div class="alert alert-info border small mb-3">
+            <i class="bi bi-shield-shaded me-1"></i> Administrator tools for verifying ownership papers, checking absentee status, and enforcing NITI Aayog model norms.
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded-3 border">
+                <h6 class="fw-bold text-success mb-2"><i class="bi bi-patch-check me-2"></i>Quick Verification Action</h6>
+                <p class="small text-muted mb-3">Verify all currently unverified land listings with 1-click:</p>
+                <button class="btn btn-farm-primary btn-sm rounded-pill" onclick="verifyAllLands()">
+                  <i class="bi bi-check-all me-1"></i> Verify All Pending Lands
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded-3 border">
+                <h6 class="fw-bold text-danger mb-2"><i class="bi bi-arrow-counterclockwise me-2"></i>Reset Project Demo State</h6>
+                <p class="small text-muted mb-3">Re-seed initial sample data for viva / presentation:</p>
+                <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="resetDatabaseDemo()">
+                  <i class="bi bi-trash3 me-1"></i> Reset All Data to Initial Demo State
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto">
+    <div class="container text-center py-4 text-secondary small">
+      © 2026 KrishiConnect - Department of CSE, Lloyd Institute of Engineering & Technology
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/gemini-chat.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      loadDashboard();
+    });
+
+    function loadDashboard() {
+      let user = getActiveUser();
+      if (!user) {
+        user = {
+          name: "Kisan Rajesh Patel",
+          role: "Farmer / Cultivator",
+          email: "kisan.rajesh@krishi.in",
+          phone: "+91 98111 22334",
+          answers: {
+            farmingGoal: "Grains",
+            preferredArea: "3-8 Acres",
+            preferredSoil: "Alluvial",
+            preferredTerms: "70/30 Profit Share",
+            irrigationPreference: "Tubewell",
+            mandiAlertPreference: "WhatsApp Alerts Enabled"
+          }
+        };
+        setActiveUser(user);
+      }
+
+      document.getElementById("dashGreeting").innerText = `Welcome, ${user.name}`;
+      document.getElementById("dashRoleBadge").innerText = `${user.role} Dashboard`;
+      document.getElementById("profileNameDisplay").innerText = `${user.name} (${user.role})`;
+      document.getElementById("profileContactDisplay").innerText = `Email: ${user.email} | Mobile: ${user.phone || '+91 98765 43210'}`;
+
+      // Render Saved Questionnaire Answers
+      const answersContainer = document.getElementById("profileAnswersGrid");
+      const ans = user.answers || {};
+      const keys = Object.keys(ans);
+
+      if (keys.length === 0) {
+        answersContainer.innerHTML = `<div class="col-12 text-muted small">No customized questionnaire responses saved yet. Take the setup questionnaire on login.</div>`;
+      } else {
+        answersContainer.innerHTML = keys.map(k => `
+          <div class="col-md-4 col-sm-6">
+            <div class="p-2 bg-light rounded-3 small border">
+              <span class="text-muted d-block" style="font-size:0.75rem; text-transform:uppercase;">${formatAnswerKey(k)}</span>
+              <strong class="text-dark">${ans[k]}</strong>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      const lands = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.LANDS)) || DEFAULT_LANDS;
+      const reqs = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.REQUESTS)) || [];
+      const agrs = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.AGREEMENTS)) || DEFAULT_AGREEMENTS;
+      const ords = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.ORDERS)) || [];
+
+      document.getElementById("statLands").innerText = lands.length;
+      document.getElementById("statReqs").innerText = reqs.length;
+      document.getElementById("statAgreements").innerText = agrs.length;
+      document.getElementById("statOrders").innerText = ords.length;
+
+      // Render Requests
+      const reqTable = document.getElementById("dashRequestsTable");
+      if (reqs.length === 0) {
+        reqTable.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">No active cultivation requests yet.</td></tr>`;
+      } else {
+        reqTable.innerHTML = reqs.map((r, i) => `
+          <tr>
+            <td class="fw-bold">${r.id}</td>
+            <td>${r.landTitle}</td>
+            <td><strong>${r.farmerName}</strong><br><small class="text-muted">${r.farmerPhone || ''}</small></td>
+            <td>${r.cropIntended}</td>
+            <td>${r.proposedTenure}</td>
+            <td>${r.date}</td>
+            <td><span class="badge ${r.status.includes('Approved') ? 'bg-success' : 'bg-warning text-dark'}">${r.status}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-success rounded-pill" onclick="approveRequest(${i})">
+                <i class="bi bi-check-lg me-1"></i> Approve & Agreement
+              </button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      // Render Lands Table
+      const landTable = document.getElementById("dashLandsTable");
+      landTable.innerHTML = lands.map((l, idx) => `
+        <tr>
+          <td class="fw-bold">${l.id}</td>
+          <td><strong>${l.title}</strong></td>
+          <td>${l.ownerName}</td>
+          <td>${l.location}</td>
+          <td><span class="badge bg-light text-dark border">${l.area}</span></td>
+          <td>
+            <span class="badge ${l.verified ? 'bg-success' : 'bg-secondary'}">
+              ${l.verified ? 'Verified' : 'Pending Verification'}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteLand(${idx})"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+      `).join("");
+
+      // Render Orders
+      const orderBox = document.getElementById("dashOrdersContainer");
+      if (ords.length === 0) {
+        orderBox.innerHTML = `<div class="text-center py-4 text-muted">No buyer orders placed yet. Head over to the <a href="marketplace.html">Agri Marketplace</a> to test checkout!</div>`;
+      } else {
+        orderBox.innerHTML = ords.map(o => `
+          <div class="border rounded-3 p-3 mb-3 bg-light">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-bold text-dark"><i class="bi bi-receipt me-1"></i> Order #${o.orderId}</span>
+              <span class="badge bg-success">${o.status}</span>
+            </div>
+            <div class="text-muted small mb-2">Date: ${o.date} | Total Amount: <strong>${o.total}</strong></div>
+            <div class="small">
+              <strong>Items:</strong>
+              ${o.items.map(it => `<span class="badge bg-white text-dark border me-1">${it.name} (Qty: ${it.qty})</span>`).join("")}
+            </div>
+          </div>
+        `).join("");
+      }
+    }
+
+    function formatAnswerKey(k) {
+      return k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+    }
+
+    function approveRequest(idx) {
+      const reqs = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.REQUESTS)) || [];
+      if (reqs[idx]) {
+        reqs[idx].status = "Approved by Landowner";
+        localStorage.setItem(KRISHI_STORAGE_KEYS.REQUESTS, JSON.stringify(reqs));
+        showToast("Proposal approved! A draft land agreement has been auto-queued.", "success");
+        loadDashboard();
+      }
+    }
+
+    function deleteLand(idx) {
+      const lands = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.LANDS)) || DEFAULT_LANDS;
+      lands.splice(idx, 1);
+      localStorage.setItem(KRISHI_STORAGE_KEYS.LANDS, JSON.stringify(lands));
+      showToast("Land listing removed.", "info");
+      loadDashboard();
+    }
+
+    function verifyAllLands() {
+      const lands = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.LANDS)) || DEFAULT_LANDS;
+      lands.forEach(l => l.verified = true);
+      localStorage.setItem(KRISHI_STORAGE_KEYS.LANDS, JSON.stringify(lands));
+      showToast("All land listings verified by Administrator!", "success");
+      loadDashboard();
+    }
+
+    function resetDatabaseDemo() {
+      if (confirm("Reset all project mock data to original demo state?")) {
+        localStorage.removeItem(KRISHI_STORAGE_KEYS.LANDS);
+        localStorage.removeItem(KRISHI_STORAGE_KEYS.PRODUCTS);
+        localStorage.removeItem(KRISHI_STORAGE_KEYS.AGREEMENTS);
+        localStorage.removeItem(KRISHI_STORAGE_KEYS.REQUESTS);
+        localStorage.removeItem(KRISHI_STORAGE_KEYS.ORDERS);
+        initKrishiDB();
+        showToast("Database reset to original demo state!", "info");
+        setTimeout(() => window.location.reload(), 500);
+      }
+    }
+
+    function switchRoleQuickly() {
+      const roles = ["Farmer / Cultivator", "Landowner", "Buyer", "Administrator"];
+      const user = getActiveUser() || { name: "Demo User", role: "Farmer / Cultivator" };
+      const nextIdx = (roles.indexOf(user.role) + 1) % roles.length;
+      user.role = roles[nextIdx];
+      setActiveUser(user);
+      showToast(`Switched active profile role to ${user.role}!`, "info");
+      loadDashboard();
+    }
+  </script>
+</body>
+</html>

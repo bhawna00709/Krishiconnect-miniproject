@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agricultural Land Search, Distance & AI Crop Advisor - KrishiConnect</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg krishi-navbar sticky-top py-3">
+    <div class="container">
+      <a class="navbar-brand brand-logo" href="../index.html">
+        <span class="p-2 rounded-3 bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center">
+          <i class="bi bi-flower1"></i>
+        </span>
+        <span>Krishi<span style="color:#e76f51;">Connect</span></span>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#krishiNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="krishiNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="land-search.html">Find Land</a></li>
+          <li class="nav-item"><a class="nav-link" href="marketplace.html">Agri Market</a></li>
+          <li class="nav-item"><a class="nav-link" href="mandi-prices.html">Mandi Rates</a></li>
+          <li class="nav-item"><a class="nav-link" href="agreements.html">Agreements</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About Synopsis</a></li>
+        </ul>
+        <div id="navUserArea"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header with Weather Banner -->
+  <div class="bg-success text-white py-4" style="background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-7">
+          <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">GIS SPATIAL DISCOVERY & AI ADVISOR</span>
+          <h2 class="fw-bold mb-1">Unused Agricultural Land Directory</h2>
+          <p class="text-white-50 mb-0">Browse vacant land parcels with OpenStreetMap coordinates, live GPS distance, and AI crop recommendations.</p>
+        </div>
+        <div class="col-md-5 text-center text-md-end mt-3 mt-md-0 d-flex flex-wrap gap-2 justify-content-center justify-content-md-end align-items-center">
+          <button class="btn btn-outline-light rounded-pill px-3" onclick="findNearestFarmland()">
+            <i class="bi bi-compass me-1"></i> Locate Nearest
+          </button>
+          <button class="voice-mic-btn" onclick="startVoiceLandSearch()" title="Voice Search Farmland in Hindi/English">
+            <i class="bi bi-mic"></i>
+          </button>
+          <button class="btn btn-warning fw-bold rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addLandModal">
+            <i class="bi bi-plus-circle me-1"></i> Post New Land
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Map View Drawer -->
+  <div class="container pt-4">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+      <div class="p-3 bg-light border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="small fw-bold text-dark"><i class="bi bi-map-fill text-success me-2"></i>Live Satellite / GIS Parcel View with Soil Health</div>
+        <div class="d-flex gap-2">
+          <span class="badge bg-success">4 Parcels Mapped</span>
+          <span class="badge bg-primary">Western UP Zone</span>
+        </div>
+      </div>
+      <div id="mapDiscoveryView" style="height: 340px;"></div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container pb-5">
+    <div class="row g-4">
+      <!-- Search & Filter Sidebar -->
+      <div class="col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 sticky-top mb-4" style="top: 90px;">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h5 class="fw-bold mb-0 text-success"><i class="bi bi-funnel me-2"></i>Filter Lands</h5>
+            <button class="btn btn-sm text-muted p-0" onclick="resetFilters()">Reset</button>
+          </div>
+          <button class="btn btn-sm btn-outline-success d-lg-none w-100 my-2 rounded-pill" type="button" data-bs-toggle="collapse" data-bs-target="#landFilterCollapse" aria-expanded="false">
+            <i class="bi bi-sliders me-1"></i> Tap to Show / Hide Filters
+          </button>
+
+          <div class="collapse d-lg-block" id="landFilterCollapse">
+            <div class="mb-3 mt-2">
+              <label class="form-label small fw-semibold">Search Keywords</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                <input type="text" id="searchInput" class="form-control" placeholder="District, soil, crop..." oninput="applyFilters()">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">District / Belt</label>
+              <select id="districtFilter" class="form-select" onchange="applyFilters()">
+                <option value="all">All Districts</option>
+                <option value="Meerut">Meerut</option>
+                <option value="Bulandshahr">Bulandshahr</option>
+                <option value="Greater Noida">Greater Noida / Jewar</option>
+                <option value="Aligarh">Aligarh</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Soil Type</label>
+              <select id="soilFilter" class="form-select" onchange="applyFilters()">
+                <option value="all">Any Soil Type</option>
+                <option value="Black">Black Soil</option>
+                <option value="Alluvial">Alluvial Riverbed</option>
+                <option value="Sandy">Sandy Loam</option>
+                <option value="Clay">Clay Loam</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Water & Irrigation</label>
+              <div class="form-check small">
+                <input class="form-check-input" type="checkbox" id="irrTubewell" onchange="applyFilters()">
+                <label class="form-check-label" for="irrTubewell">Submersible / Tube Well</label>
+              </div>
+              <div class="form-check small">
+                <input class="form-check-input" type="checkbox" id="irrCanal" onchange="applyFilters()">
+                <label class="form-check-label" for="irrCanal">Canal Irrigation Access</label>
+              </div>
+            </div>
+
+            <!-- Soil health advisory tip -->
+            <div class="p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-3 text-muted small">
+              <div class="fw-bold text-success mb-1"><i class="bi bi-moisture me-1"></i>Soil Health Card Data</div>
+              All listed farmlands include verified Soil Testing Lab metrics (pH, Nitrogen, Organic Carbon).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listings Grid -->
+      <div class="col-lg-9">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="text-muted small" id="resultsCount">Showing all listings</span>
+          <div class="d-flex align-items-center gap-2">
+            <span class="small text-muted">Sort:</span>
+            <select id="sortOrder" class="form-select form-select-sm" style="width: auto;" onchange="applyFilters()">
+              <option value="newest">Recently Listed</option>
+              <option value="areaAsc">Area (Smallest First)</option>
+              <option value="areaDesc">Area (Largest First)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-4" id="landsGrid">
+          <!-- Land items populated via JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application / Cultivation Request Modal -->
+  <div class="modal fade" id="requestLandModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-send-check me-2"></i>Apply for Land Cultivation</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="landRequestForm" onsubmit="submitLandRequest(event)">
+          <div class="modal-body p-4">
+            <input type="hidden" id="modalLandId">
+            <div class="alert alert-light border small mb-3">
+              <strong id="modalLandTitle" class="d-block text-dark">Selected Land Title</strong>
+              <span id="modalLandOwner" class="text-muted">Owner info</span>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Farmer / Cultivator Name</label>
+              <input type="text" id="reqFarmerName" class="form-control" required placeholder="Your full name">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Contact Mobile</label>
+              <input type="tel" id="reqFarmerPhone" class="form-control" required placeholder="+91 XXXXX XXXXX">
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Proposed Crops</label>
+                <input type="text" id="reqFarmerCrop" class="form-control" required placeholder="e.g. Mustard, Wheat">
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Requested Duration</label>
+                <select id="reqFarmerTenure" class="form-select">
+                  <option value="1 Year">1 Year</option>
+                  <option value="2 Years">2 Years</option>
+                  <option value="3 to 5 Years">3 to 5 Years</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Proposed Terms / Note to Landowner</label>
+              <textarea id="reqFarmerMsg" class="form-control" rows="3" placeholder="Outline whether you prefer cash lease or crop profit-sharing (e.g. 70-30 split)..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-farm-primary rounded-pill">Submit Application</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Land Parcel Modal -->
+  <div class="modal fade" id="addLandModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-plus-square-dotted me-2"></i>List Unused Agricultural Land</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="addLandForm" onsubmit="saveNewLand(event)">
+          <div class="modal-body p-4">
+            <div class="row g-3 mb-3">
+              <div class="col-md-8">
+                <label class="form-label small fw-semibold">Listing Title / Headline</label>
+                <input type="text" id="newLandTitle" class="form-control" placeholder="e.g. 6 Acres Riverfront Fertile Farmland" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Acreage Area</label>
+                <input type="text" id="newLandArea" class="form-control" placeholder="e.g. 6.0 Acres" required>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Landowner Name</label>
+                <input type="text" id="newLandOwner" class="form-control" placeholder="e.g. Vikram Sharma" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Contact Phone</label>
+                <input type="tel" id="newLandPhone" class="form-control" placeholder="+91 XXXXX XXXXX" required>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Location (District & State)</label>
+                <input type="text" id="newLandLoc" class="form-control" placeholder="e.g. Bulandshahr, Uttar Pradesh" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Soil Type</label>
+                <select id="newLandSoil" class="form-select" required>
+                  <option value="Alluvial Soil">Alluvial Soil</option>
+                  <option value="Black Loamy Soil">Black Loamy Soil</option>
+                  <option value="Sandy Loam">Sandy Loam</option>
+                  <option value="Clay Loam">Clay Loam</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Water / Irrigation Source</label>
+                <input type="text" id="newLandWater" class="form-control" placeholder="e.g. High-discharge Tube Well & Canal" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Expected Rent / Sharing Terms</label>
+                <input type="text" id="newLandPrice" class="form-control" placeholder="e.g. ₹ 48,000 / Acre / Year or 30% share" required>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">GPS Latitude (Optional)</label>
+                <input type="text" id="newLandLat" class="form-control" placeholder="e.g. 28.5200" value="28.5200">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">GPS Longitude (Optional)</label>
+                <input type="text" id="newLandLng" class="form-control" placeholder="e.g. 77.8200" value="77.8200">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Suitable Crops</label>
+              <input type="text" id="newLandCrops" class="form-control" placeholder="e.g. Sugarcane, Wheat, Basmati Rice, Mustard" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Field Description & Highlights</label>
+              <textarea id="newLandDesc" class="form-control" rows="3" placeholder="Fencing status, road connectivity, power supply, reasons for leasing out..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-farm-primary rounded-pill">Publish Land Listing</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Soil Health & AI Recommendations Modal -->
+  <div class="modal fade" id="soilModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-moisture me-2"></i>Soil Health Card & Crop Advisory</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <h6 class="fw-bold text-success mb-3" id="soilLandName">Farmland Soil Analysis</h6>
+          <div class="row g-3 mb-3">
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Soil pH Level</small>
+                <h4 class="fw-bold mb-0 text-success" id="soilPhVal">7.2</h4>
+                <small class="text-muted">Neutral / Ideal</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Nitrogen Content</small>
+                <h4 class="fw-bold mb-0 text-primary" id="soilNitrogenVal">High</h4>
+                <small class="text-muted">Organic matter</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Organic Carbon</small>
+                <h4 class="fw-bold mb-0 text-dark" id="soilCarbonVal">0.78%</h4>
+                <small class="text-muted">Certified fertility</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Moisture Retention</small>
+                <h4 class="fw-bold mb-0 text-info" id="soilMoistureVal">Optimal</h4>
+                <small class="text-muted">Tubewell recharge</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Recommended Crops -->
+          <div class="p-3 bg-light rounded-3 border">
+            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-stars text-warning me-1"></i>AI Recommended High-Profit Crops for this Soil:</h6>
+            <div id="aiCropBadges" class="d-flex flex-wrap gap-1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto">
+    <div class="container text-center py-4 text-secondary small">
+      © 2026 KrishiConnect - Department of CSE, Lloyd Institute of Engineering & Technology
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/gemini-chat.js"></script>
+  <script>
+    let currentLands = [];
+    let searchMap;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      currentLands = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.LANDS)) || DEFAULT_LANDS;
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('location')) {
+        document.getElementById('districtFilter').value = params.get('location');
+      }
+
+      const u = getActiveUser();
+      if (u) {
+        document.getElementById('reqFarmerName').value = u.name;
+        if (u.phone) document.getElementById('reqFarmerPhone').value = u.phone;
+        document.getElementById('newLandOwner').value = u.name;
+        if (u.phone) document.getElementById('newLandPhone').value = u.phone;
+      }
+
+      initSearchMap();
+      applyFilters();
+    });
+
+    function initSearchMap() {
+      const mapElem = document.getElementById("mapDiscoveryView");
+      if (!mapElem) return;
+
+      searchMap = L.map('mapDiscoveryView').setView([28.4500, 77.7500], 9);
+
+      const topoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+      });
+
+      const satelliteLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+      });
+
+      topoLayer.addTo(searchMap);
+
+      L.control.layers({
+        "Agricultural Topo Map": topoLayer,
+        "Dark Farmland View": satelliteLayer
+      }, null, { position: 'topright' }).addTo(searchMap);
+
+      currentLands.forEach(land => {
+        if (land.lat && land.lng) {
+          const marker = L.marker([land.lat, land.lng]).addTo(searchMap);
+          marker.bindPopup(`
+            <div style="font-family:'Outfit',sans-serif; max-width:230px;">
+              <strong style="color:#2d6a4f;">${land.title}</strong><br>
+              <small class="text-muted">${land.location} (${land.area})</small>
+              <div style="font-weight:bold; margin-top:4px;">${land.expectedPrice}</div>
+              <button class="btn btn-sm btn-success w-100 mt-2 rounded-pill" onclick="openRequestModal('${land.id}')">Apply Now</button>
+            </div>
+          `);
+        }
+      });
+    }
+
+    function renderLands(list) {
+      const container = document.getElementById("landsGrid");
+      const count = document.getElementById("resultsCount");
+      count.innerText = `Showing ${list.length} available land parcel(s)`;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="col-12 text-center py-5">
+            <div class="display-1 text-muted"><i class="bi bi-geo-alt"></i></div>
+            <h4 class="fw-bold mt-3">No matching land parcels found</h4>
+            <p class="text-muted">Try clearing your filters or search keywords.</p>
+            <button class="btn btn-outline-success rounded-pill" onclick="resetFilters()">Clear Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(land => `
+        <div class="col-md-6">
+          <div class="land-card h-100 position-relative">
+            <span class="land-badge ${land.verified ? 'badge-verified' : 'badge-available'}">
+              ${land.verified ? '<i class="bi bi-patch-check-fill me-1"></i> Verified Parcel' : 'Active Listing'}
+            </span>
+            <img src="${land.image}" alt="${land.title}" class="w-100" style="height: 220px; object-fit: cover;">
+            <div class="p-4 d-flex flex-column" style="min-height: 360px;">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
+                  <i class="bi bi-bounding-box-circles me-1"></i>${land.area}
+                </span>
+                <span class="text-muted small"><i class="bi bi-clock-history me-1"></i>${land.leaseDuration}</span>
+              </div>
+
+              <h5 class="fw-bold mb-1">${land.title}</h5>
+              <p class="text-danger small mb-2"><i class="bi bi-geo-alt-fill me-1"></i>${land.location}</p>
+              
+              <p class="text-muted small mb-3 flex-grow-1">${land.description}</p>
+
+              <div class="p-3 bg-light rounded-3 small mb-3">
+                <div class="row g-1">
+                  <div class="col-6"><strong>Soil:</strong> ${land.soilType}</div>
+                  <div class="col-6"><strong>Water:</strong> ${land.waterSource}</div>
+                  <div class="col-12 mt-1"><strong>Crops:</strong> ${land.suitableCrops}</div>
+                  <div class="col-12 mt-1"><strong>Owner:</strong> ${land.ownerName}</div>
+                </div>
+                <div class="mt-2 pt-2 border-top d-flex justify-content-between align-items-center">
+                  <span class="text-success fw-bold"><i class="bi bi-moisture me-1"></i>Soil pH: ${land.soilHealth ? land.soilHealth.ph : '7.0'}</span>
+                  <a href="javascript:void(0)" class="text-decoration-none small text-primary fw-semibold" onclick="viewSoilCard('${land.id}')">View Lab Report & Crops</a>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center justify-content-between pt-3 border-top mt-auto">
+                <div>
+                  <small class="text-muted d-block" style="font-size:0.75rem;">Expected Rent / Terms</small>
+                  <span class="price-tag fs-6">${land.expectedPrice}</span>
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline-success btn-sm rounded-circle px-2" onclick="shareOnWhatsApp('${land.title}', 'Location: ${land.location} | Area: ${land.area} | Price: ${land.expectedPrice}')" title="Share via WhatsApp">
+                    <i class="bi bi-whatsapp"></i>
+                  </button>
+                  <button class="btn btn-farm-primary btn-sm px-3" onclick="openRequestModal('${land.id}')">
+                    <i class="bi bi-file-earmark-plus me-1"></i> Apply for Land
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function viewSoilCard(landId) {
+      const land = currentLands.find(l => l.id === landId);
+      if (!land || !land.soilHealth) return;
+
+      document.getElementById("soilLandName").innerText = land.title;
+      document.getElementById("soilPhVal").innerText = land.soilHealth.ph;
+      document.getElementById("soilNitrogenVal").innerText = land.soilHealth.nitrogen;
+      document.getElementById("soilCarbonVal").innerText = land.soilHealth.organicCarbon;
+      document.getElementById("soilMoistureVal").innerText = land.soilHealth.moisture;
+
+      const recommended = getRecommendedCrops(land.soilType, land.waterSource, 'rabi');
+      document.getElementById("aiCropBadges").innerHTML = recommended.map(c => `
+        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">${c}</span>
+      `).join("");
+
+      const modal = new bootstrap.Modal(document.getElementById("soilModal"));
+      modal.show();
+    }
+
+    function applyFilters() {
+      const q = document.getElementById("searchInput").value.toLowerCase();
+      const dist = document.getElementById("districtFilter").value;
+      const soil = document.getElementById("soilFilter").value;
+      const needTubewell = document.getElementById("irrTubewell").checked;
+      const needCanal = document.getElementById("irrCanal").checked;
+      const sort = document.getElementById("sortOrder").value;
+
+      let filtered = currentLands.filter(item => {
+        const matchesQuery = !q || item.title.toLowerCase().includes(q) || item.location.toLowerCase().includes(q) || item.suitableCrops.toLowerCase().includes(q) || item.soilType.toLowerCase().includes(q);
+        const matchesDist = dist === "all" || item.location.toLowerCase().includes(dist.toLowerCase());
+        const matchesSoil = soil === "all" || item.soilType.toLowerCase().includes(soil.toLowerCase());
+        const matchesTube = !needTubewell || item.waterSource.toLowerCase().includes("tubewell") || item.waterSource.toLowerCase().includes("borewell") || item.waterSource.toLowerCase().includes("tube well");
+        const matchesCanal = !needCanal || item.waterSource.toLowerCase().includes("canal");
+
+        return matchesQuery && matchesDist && matchesSoil && matchesTube && matchesCanal;
+      });
+
+      if (sort === "areaAsc") {
+        filtered.sort((a, b) => parseFloat(a.area) - parseFloat(b.area));
+      } else if (sort === "areaDesc") {
+        filtered.sort((a, b) => parseFloat(b.area) - parseFloat(a.area));
+      }
+
+      renderLands(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("districtFilter").value = "all";
+      document.getElementById("soilFilter").value = "all";
+      document.getElementById("irrTubewell").checked = false;
+      document.getElementById("irrCanal").checked = false;
+      applyFilters();
+    }
+
+    function openRequestModal(landId) {
+      const land = currentLands.find(l => l.id === landId);
+      if (!land) return;
+
+      document.getElementById("modalLandId").value = land.id;
+      document.getElementById("modalLandTitle").innerText = land.title + " (" + land.area + ")";
+      document.getElementById("modalLandOwner").innerText = "Owner: " + land.ownerName + " | Location: " + land.location;
+
+      const modal = new bootstrap.Modal(document.getElementById("requestLandModal"));
+      modal.show();
+    }
+
+    function submitLandRequest(e) {
+      e.preventDefault();
+      const landId = document.getElementById("modalLandId").value;
+      const land = currentLands.find(l => l.id === landId);
+
+      const newReq = {
+        id: "REQ-" + Math.floor(100 + Math.random() * 900),
+        landId: landId,
+        landTitle: land ? land.title : "Land Parcel",
+        farmerName: document.getElementById("reqFarmerName").value,
+        farmerPhone: document.getElementById("reqFarmerPhone").value,
+        cropIntended: document.getElementById("reqFarmerCrop").value,
+        proposedTenure: document.getElementById("reqFarmerTenure").value,
+        message: document.getElementById("reqFarmerMsg").value,
+        date: new Date().toISOString().split('T')[0],
+        status: "Pending Landowner Review"
+      };
+
+      const existingReqs = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.REQUESTS)) || [];
+      existingReqs.push(newReq);
+      localStorage.setItem(KRISHI_STORAGE_KEYS.REQUESTS, JSON.stringify(existingReqs));
+
+      bootstrap.Modal.getInstance(document.getElementById("requestLandModal")).hide();
+      showToast(`Application successfully sent to landowner for ${newReq.landTitle}! Track under Dashboard.`, "success");
+    }
+
+    function saveNewLand(e) {
+      e.preventDefault();
+      const newLand = {
+        id: "LND-" + Math.floor(200 + Math.random() * 800),
+        title: document.getElementById("newLandTitle").value,
+        ownerName: document.getElementById("newLandOwner").value,
+        ownerPhone: document.getElementById("newLandPhone").value,
+        location: document.getElementById("newLandLoc").value,
+        lat: parseFloat(document.getElementById("newLandLat").value) || 28.5000,
+        lng: parseFloat(document.getElementById("newLandLng").value) || 77.8000,
+        area: document.getElementById("newLandArea").value,
+        soilType: document.getElementById("newLandSoil").value,
+        waterSource: document.getElementById("newLandWater").value,
+        suitableCrops: document.getElementById("newLandCrops").value,
+        leaseDuration: "1 to 3 Years",
+        rateType: "Mutual Agreement",
+        expectedPrice: document.getElementById("newLandPrice").value,
+        status: "Available",
+        image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
+        description: document.getElementById("newLandDesc").value || "Newly listed agricultural parcel ready for cultivation.",
+        verified: false,
+        soilHealth: { ph: 7.1, nitrogen: "Medium (260 kg/ha)", organicCarbon: "0.72%", moisture: "Good" }
+      };
+
+      currentLands.unshift(newLand);
+      localStorage.setItem(KRISHI_STORAGE_KEYS.LANDS, JSON.stringify(currentLands));
+
+      bootstrap.Modal.getInstance(document.getElementById("addLandModal")).hide();
+      showToast("New land parcel successfully listed! Available immediately in the directory.", "success");
+      applyFilters();
+    }
+
+    function startVoiceLandSearch() {
+      showToast("Voice assistant activated. Searching for Meerut and Bulandshahr farmlands...", "info");
+      speakKrishiAdvice("मेरठ और बुलंदशहर में उपलब्ध उपजाऊ कृषि भूमि की सूची दिखाई जा रही है।");
+      document.getElementById("searchInput").value = "Meerut";
+      applyFilters();
+    }
+
+    function findNearestFarmland() {
+      showToast("Locating parcels nearest to Western UP / NCR...", "info");
+      if (searchMap) searchMap.flyTo([28.4070, 77.8498], 11);
+    }
+  </script>
+</body>
+</html>

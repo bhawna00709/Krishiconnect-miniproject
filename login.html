@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Onboarding - KrishiConnect Multi-Role Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 25px;
+    }
+    .step-indicator::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #e2e8f0;
+      z-index: 1;
+      transform: translateY(-50%);
+    }
+    .step-node {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      z-index: 2;
+      transition: all 0.3s ease;
+      color: #64748b;
+    }
+    .step-node.active {
+      border-color: #2d6a4f;
+      background: #2d6a4f;
+      color: white;
+      box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.2);
+    }
+    .step-node.completed {
+      border-color: #2d6a4f;
+      background: #d8f3dc;
+      color: #1b4332;
+    }
+    .onboarding-card {
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .selectable-option {
+      cursor: pointer;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      background: #ffffff;
+    }
+    .selectable-option:hover {
+      border-color: #52b788;
+      background: #f7fdf9;
+    }
+    .selectable-option.selected {
+      border-color: #2d6a4f;
+      background: #edf7f0;
+      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.12);
+    }
+    .selectable-option input[type="radio"],
+    .selectable-option input[type="checkbox"] {
+      accent-color: #2d6a4f;
+      width: 18px;
+      height: 18px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg krishi-navbar sticky-top py-3">
+    <div class="container">
+      <a class="navbar-brand brand-logo" href="../index.html">
+        <span class="p-2 rounded-3 bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center">
+          <i class="bi bi-flower1"></i>
+        </span>
+        <span>Krishi<span style="color:#e76f51;">Connect</span></span>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#krishiNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="krishiNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="land-search.html">Find Land</a></li>
+          <li class="nav-item"><a class="nav-link" href="marketplace.html">Agri Market</a></li>
+          <li class="nav-item"><a class="nav-link" href="mandi-prices.html">Mandi Rates</a></li>
+          <li class="nav-item"><a class="nav-link" href="agreements.html">Agreements</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        </ul>
+        <div id="navUserArea"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Login & Onboarding Main Container -->
+  <div class="container py-5 my-auto">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="row g-0">
+
+            <!-- Left Info Panel with Farmer Theme (Desktop Only to streamline mobile login) -->
+            <div class="col-lg-5 p-5 text-white d-none d-lg-flex flex-column justify-content-between" style="background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);">
+              <div>
+                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill mb-3 fw-bold" id="leftBadgeText">Role Authentication</span>
+                <h3 class="fw-bold mb-3" id="leftTitle">KrishiConnect Agricultural Portal</h3>
+                <p class="text-white-50 small mb-4" id="leftSubtitle">Sign in with your credentials or test with one-click demo profiles. Afterwards, your profile preferences will be configured step-by-step.</p>
+
+                <div class="d-flex flex-column gap-3 mt-4" id="leftHighlights">
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="p-2 rounded-circle bg-white bg-opacity-20"><i class="bi bi-person-workspace"></i></span>
+                    <div>
+                      <div class="fw-bold">1. Verified Credentials</div>
+                      <div class="small text-white-50">Secure multi-role authentication</div>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="p-2 rounded-circle bg-white bg-opacity-20"><i class="bi bi-question-circle"></i></span>
+                    <div>
+                      <div class="fw-bold">2. Tailored Onboarding</div>
+                      <div class="small text-white-50">5-6 role-specific preference questions</div>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="p-2 rounded-circle bg-white bg-opacity-20"><i class="bi bi-speedometer2"></i></span>
+                    <div>
+                      <div class="fw-bold">3. Customized Dashboard</div>
+                      <div class="small text-white-50">All your saved data immediately accessible</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-top border-white border-opacity-25 small text-white-50">
+                KrishiConnect B.Tech CSE Prototype • Session 2026–27
+              </div>
+            </div>
+
+            <!-- Right Form Section: Stage 1 = Login / Stage 2 = 6-Step Wizard -->
+            <div class="col-12 col-lg-7 p-3 p-sm-4 p-md-5 bg-white">
+
+              <!-- ================= STAGE 1: LOGIN FORM ================= -->
+              <div id="loginSection">
+                <h4 class="fw-bold text-dark mb-1">Sign In to KrishiConnect</h4>
+                <p class="text-muted small mb-4">Select your role or choose a 1-click test credential below:</p>
+
+                <!-- Quick Demo Selector Buttons -->
+                <div class="mb-4">
+                  <label class="form-label small fw-bold text-muted text-uppercase">1-Click Test Credentials</label>
+                  <div class="row g-2">
+                    <div class="col-6 col-sm-3">
+                      <button type="button" class="btn btn-outline-success btn-sm w-100 py-2 demo-btn" onclick="fillDemo('farmer')">
+                        <i class="bi bi-person-workspace d-block mb-1 fs-5"></i>
+                        <span class="small fw-semibold">Farmer</span>
+                      </button>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                      <button type="button" class="btn btn-outline-success btn-sm w-100 py-2 demo-btn" onclick="fillDemo('landowner')">
+                        <i class="bi bi-house-door d-block mb-1 fs-5"></i>
+                        <span class="small fw-semibold">Landowner</span>
+                      </button>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                      <button type="button" class="btn btn-outline-success btn-sm w-100 py-2 demo-btn" onclick="fillDemo('buyer')">
+                        <i class="bi bi-bag-check d-block mb-1 fs-5"></i>
+                        <span class="small fw-semibold">Buyer</span>
+                      </button>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                      <button type="button" class="btn btn-outline-success btn-sm w-100 py-2 demo-btn" onclick="fillDemo('admin')">
+                        <i class="bi bi-shield-lock d-block mb-1 fs-5"></i>
+                        <span class="small fw-semibold">Admin</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <form id="loginForm" onsubmit="handleInitialLogin(event)">
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Account Role</label>
+                    <select id="userRole" class="form-select" required onchange="onRoleChange()">
+                      <option value="Farmer / Cultivator">Farmer / Cultivator</option>
+                      <option value="Landowner">Agricultural Landowner</option>
+                      <option value="Buyer">Buyer (Consumer / Retailer)</option>
+                      <option value="Administrator">Platform Administrator</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Email or Mobile</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                      <input type="text" id="userEmail" class="form-control" placeholder="e.g. kisan.rajesh@krishi.in" required value="kisan.rajesh@krishi.in">
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <label class="form-label small fw-semibold mb-0">Password</label>
+                      <a href="javascript:void(0)" onclick="alert('Demo password is: kisan123 / land123 / buyer123')" class="small text-decoration-none text-success">Forgot password?</a>
+                    </div>
+                    <div class="input-group mt-1">
+                      <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                      <input type="password" id="userPassword" class="form-control" placeholder="Enter password" required value="kisan123">
+                      <button class="btn btn-outline-secondary" type="button" onclick="togglePassVisibility()"><i class="bi bi-eye"></i></button>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-farm-primary w-100 py-2 mb-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Submit & Proceed to Setup
+                  </button>
+
+                  <div class="text-center small text-muted">
+                    Don't have an account yet? 
+                    <a href="register.html" class="text-success fw-bold text-decoration-none">Register here</a>
+                  </div>
+                </form>
+              </div>
+
+              <!-- ================= STAGE 2: 5-6 QUESTION ONBOARDING WIZARD ================= -->
+              <div id="wizardSection" class="d-none onboarding-card">
+                <div>
+                  <!-- Step Indicator Bar (6 Steps) -->
+                  <div class="step-indicator">
+                    <div class="step-node active" id="node1">1</div>
+                    <div class="step-node" id="node2">2</div>
+                    <div class="step-node" id="node3">3</div>
+                    <div class="step-node" id="node4">4</div>
+                    <div class="step-node" id="node5">5</div>
+                    <div class="step-node" id="node6">6</div>
+                  </div>
+
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge bg-success bg-opacity-10 text-success fw-bold" id="stepBadge">Question 1 of 6</span>
+                    <small class="text-muted" id="userWelcomeBadge">Welcome, Kisan</small>
+                  </div>
+
+                  <!-- Dynamic Question Container -->
+                  <div id="questionContainer">
+                    <h5 class="fw-bold text-dark mb-1" id="qTitle">What is your primary farming/land objective?</h5>
+                    <p class="text-muted small mb-4" id="qDesc">Select the main goal you want KrishiConnect to assist you with.</p>
+
+                    <div id="qOptions" class="d-flex flex-column gap-2">
+                      <!-- Dynamic options injected here -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Wizard Navigation Footer Buttons -->
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-4 gap-2">
+                  <button type="button" class="btn btn-outline-secondary rounded-pill px-3 px-sm-4" id="prevBtn" onclick="prevStep()" disabled>
+                    <i class="bi bi-arrow-left me-1"></i> Previous
+                  </button>
+                  <button type="button" class="btn btn-farm-primary rounded-pill px-3 px-sm-4" id="nextBtn" onclick="nextStep()">
+                    Next <i class="bi bi-arrow-right ms-1"></i>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto">
+    <div class="container text-center py-3 text-secondary small">
+      © 2026 KrishiConnect - Lloyd Institute of Engineering & Technology (AKTU Lucknow)
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/gemini-chat.js"></script>
+  <script>
+    const DEMO_PROFILES = {
+      farmer: {
+        role: "Farmer / Cultivator",
+        email: "kisan.rajesh@krishi.in",
+        pass: "kisan123",
+        name: "Kisan Rajesh Patel",
+        phone: "+91 98111 22334"
+      },
+      landowner: {
+        role: "Landowner",
+        email: "rameshwar.land@krishi.in",
+        pass: "land123",
+        name: "Rameshwar Sharma",
+        phone: "+91 98765 43210"
+      },
+      buyer: {
+        role: "Buyer",
+        email: "anita.buyer@krishi.in",
+        pass: "buyer123",
+        name: "Anita Gupta",
+        phone: "+91 94123 77889"
+      },
+      admin: {
+        role: "Administrator",
+        email: "admin@krishiconnect.edu",
+        pass: "admin123",
+        name: "Bhawna (Admin)",
+        phone: "+91 90000 11111"
+      }
+    };
+
+    // Staging State
+    let currentAuthUser = null;
+    let currentStep = 1;
+    let userAnswers = {};
+
+    function fillDemo(type) {
+      const p = DEMO_PROFILES[type];
+      if (!p) return;
+      document.getElementById("userRole").value = p.role;
+      document.getElementById("userEmail").value = p.email;
+      document.getElementById("userPassword").value = p.pass;
+      showToast(`Selected demo credentials for ${p.name} (${p.role})`, "info");
+    }
+
+    function togglePassVisibility() {
+      const p = document.getElementById("userPassword");
+      p.type = p.type === "password" ? "text" : "password";
+    }
+
+    function onRoleChange() {
+      const r = document.getElementById("userRole").value;
+      if (r === "Landowner") fillDemo("landowner");
+      else if (r === "Buyer") fillDemo("buyer");
+      else if (r === "Administrator") fillDemo("admin");
+      else fillDemo("farmer");
+    }
+
+    // Role-specific 6-Question Bank
+    const QUESTIONS_BY_ROLE = {
+      "Farmer / Cultivator": [
+        {
+          key: "farmingGoal",
+          title: "1. What is your primary cultivation goal?",
+          desc: "Choose the main type of farming you are planning for the current season.",
+          options: [
+            { label: "Cereal Grain Farming (Wheat, Paddy, Maize)", val: "Grains" },
+            { label: "Commercial Cash Crops (Sugarcane, Mustard)", val: "Cash Crops" },
+            { label: "High-Value Organic Vegetables & Polyhouse", val: "Horticulture" },
+            { label: "Dairy & Livestock Fodder Production", val: "Dairy Fodder" }
+          ]
+        },
+        {
+          key: "preferredArea",
+          title: "2. How much farmland area are you seeking to cultivate?",
+          desc: "Select the acreage range suitable for your machinery and labor capability.",
+          options: [
+            { label: "1 to 3 Acres (Small Scale / High-Density)", val: "1-3 Acres" },
+            { label: "3 to 8 Acres (Medium Farm Tract)", val: "3-8 Acres" },
+            { label: "8 to 15+ Acres (Large Scale Commercial Tract)", val: "8-15+ Acres" }
+          ]
+        },
+        {
+          key: "preferredSoil",
+          title: "3. What soil type do your crops perform best in?",
+          desc: "We will filter matching land parcels across Western UP accordingly.",
+          options: [
+            { label: "Black Loamy Soil (Ideal for Sugarcane & Wheat)", val: "Black Loam" },
+            { label: "Alluvial Riverbed Soil (Basmati Paddy & Mustard)", val: "Alluvial" },
+            { label: "Sandy Loam (Zaid Vegetables & Flowers)", val: "Sandy Loam" },
+            { label: "Clay Loam (Heavy multi-season retention)", val: "Clay Loam" }
+          ]
+        },
+        {
+          key: "preferredTerms",
+          title: "4. What land agreement model do you prefer?",
+          desc: "Choose how you wish to formalize terms with the absentee landowner.",
+          options: [
+            { label: "NITI Aayog 70/30 Crop Profit Sharing (Zero upfront land cost)", val: "70/30 Profit Share" },
+            { label: "Fixed Cash Lease (e.g. ₹ 45,000 / Acre / Year)", val: "Fixed Rent" },
+            { label: "Flexible Joint Venture with Input Cost Sharing", val: "Joint Venture" }
+          ]
+        },
+        {
+          key: "irrigationPreference",
+          title: "5. What irrigation facility is essential for your farming?",
+          desc: "Ensures selected land has sufficient water recharge throughout the crop cycle.",
+          options: [
+            { label: "Submersible Tubewell with 24x7 Power Backup", val: "Tubewell" },
+            { label: "Canal Water Access with Feeder Ditch", val: "Canal Feeder" },
+            { label: "Solar Powered Drip / Micro-Irrigation Lines", val: "Solar Drip" }
+          ]
+        },
+        {
+          key: "mandiAlertPreference",
+          title: "6. Would you like daily Mandi Rate SMS & WhatsApp alerts?",
+          desc: "Get notified when commodity prices hit your target selling price.",
+          options: [
+            { label: "Yes, send daily WhatsApp alerts for Western UP Mandis", val: "WhatsApp Alerts Enabled" },
+            { label: "Yes, send daily SMS price benchmark summaries", val: "SMS Alerts Enabled" },
+            { label: "No, I will check prices manually on the portal", val: "Manual Only" }
+          ]
+        }
+      ],
+      "Landowner": [
+        {
+          key: "landStatus",
+          title: "1. What is the current status of your agricultural parcel?",
+          desc: "Understanding land readiness helps connect you with the right cultivator.",
+          options: [
+            { label: "Currently vacant / fallow (Ready for immediate sowing)", val: "Vacant Fallow" },
+            { label: "Underutilized due to outstation migration to city", val: "Absentee Owner" },
+            { label: "Lease expiring soon, seeking reliable cultivator", val: "Seeking New Tenant" }
+          ]
+        },
+        {
+          key: "totalHolding",
+          title: "2. What is the total acreage you wish to make productive?",
+          desc: "Specify available land parcel size.",
+          options: [
+            { label: "2 to 5 Acres Parcel", val: "2-5 Acres" },
+            { label: "5 to 10 Acres Tract", val: "5-10 Acres" },
+            { label: "10+ Acres Large Agricultural Farm", val: "10+ Acres" }
+          ]
+        },
+        {
+          key: "waterSourceStatus",
+          title: "3. What water / electricity infrastructure is on the ground?",
+          desc: "Cultivators prioritize parcels with verified water sources.",
+          options: [
+            { label: "Functional Submersible Borewell / Tube well", val: "Functional Borewell" },
+            { label: "Irrigation Canal Feeder Touch", val: "Canal Feeder" },
+            { label: "Open Dug Well with Solar Pump", val: "Solar Pump" }
+          ]
+        },
+        {
+          key: "expectedLeaseModel",
+          title: "4. How would you like to receive consideration for your land?",
+          desc: "Based on NITI Aayog Model Land Leasing Act guidelines.",
+          options: [
+            { label: "30% Net Harvest Profit Share (No management hassle)", val: "30% Profit Share" },
+            { label: "Fixed Cash Lease Rent paid annually / semi-annually", val: "Fixed Annual Lease" },
+            { label: "Open to mutual negotiation with farmer", val: "Mutual Terms" }
+          ]
+        },
+        {
+          key: "leaseDurationPref",
+          title: "5. What lease tenure do you prefer?",
+          desc: "Clear duration prevents informal disputes.",
+          options: [
+            { label: "1 Year (Annual Renewable Contract)", val: "1 Year" },
+            { label: "2 to 3 Years (Standard Rabi & Kharif cycle)", val: "2-3 Years" },
+            { label: "5 Years Long-term Agricultural Partnership", val: "5 Years" }
+          ]
+        },
+        {
+          key: "legalProtection",
+          title: "6. Do you require a digital NITI Aayog agreement certificate?",
+          desc: "Secures ownership without creating tenancy or encumbrance risks.",
+          options: [
+            { label: "Yes, issue signed digital agreement certificate with PDF export", val: "Digital Certificate Required" },
+            { label: "Standard written agreement record only", val: "Standard Record" }
+          ]
+        }
+      ],
+      "Buyer": [
+        {
+          key: "buyerType",
+          title: "1. What type of produce buyer are you?",
+          desc: "Helps tailor wholesale vs retail harvest offerings.",
+          options: [
+            { label: "Direct Household Consumer (Fresh Organic Produce)", val: "Household" },
+            { label: "Retail Grocery / Vegetable Vendor", val: "Retailer" },
+            { label: "Bulk APMC Mandi Wholesaler / Trader", val: "Wholesaler" },
+            { label: "Food Processing / Dairy Enterprise", val: "Food Processor" }
+          ]
+        },
+        {
+          key: "interestCategories",
+          title: "2. Which farm products are you looking to purchase?",
+          desc: "Select your primary interest category.",
+          options: [
+            { label: "Pure A2 Gir Cow Bilona Ghee & Dairy Products", val: "A2 Ghee & Dairy" },
+            { label: "Farm Fresh Desi Vegetables & Seasonal Fruits", val: "Vegetables & Fruits" },
+            { label: "Cleaned Sharbati Wheat & Basmati Rice Grains", val: "Grains & Cereals" },
+            { label: "Fresh Marigold & Festive Cut Flowers", val: "Flowers" }
+          ]
+        },
+        {
+          key: "purchaseFrequency",
+          title: "3. How frequently do you require farm deliveries?",
+          desc: "Aligns harvesting schedule with cultivators.",
+          options: [
+            { label: "Daily Fresh Harvest Dispatches", val: "Daily" },
+            { label: "Weekly Scheduled Deliveries", val: "Weekly" },
+            { label: "Monthly Bulk Stock Replenishment", val: "Monthly Bulk" }
+          ]
+        },
+        {
+          key: "deliveryZone",
+          title: "4. Where is your delivery destination located?",
+          desc: "Optimizes direct transport logistics.",
+          options: [
+            { label: "NCR (Noida, Greater Noida, Ghaziabad, Delhi)", val: "Delhi NCR" },
+            { label: "Western UP (Meerut, Bulandshahr, Hapur, Aligarh)", val: "Western UP" },
+            { label: "Interstate Transport / APMC Hub", val: "Interstate" }
+          ]
+        },
+        {
+          key: "qualityStandard",
+          title: "5. What quality standard do you require?",
+          desc: "Cultivators provide lab-tested pesticide-free harvest.",
+          options: [
+            { label: "Certified Chemical-Free & Organic", val: "Organic Certified" },
+            { label: "Pesticide-Safe Commercial Grade A", val: "Grade A" },
+            { label: "Standard Fresh Farm Harvest", val: "Standard Fresh" }
+          ]
+        },
+        {
+          key: "whatsappOrderOptIn",
+          title: "6. Do you want direct WhatsApp harvest dispatch tracking?",
+          desc: "Real-time dispatches from cultivator field to your door.",
+          options: [
+            { label: "Yes, notify me via WhatsApp with farmer photos", val: "WhatsApp Tracking Enabled" },
+            { label: "Portal order updates only", val: "Portal Only" }
+          ]
+        }
+      ],
+      "Administrator": [
+        {
+          key: "adminRole",
+          title: "1. What is your administrative moderation role?",
+          desc: "Defines administrative permissions.",
+          options: [
+            { label: "Academic Evaluator / Faculty Member", val: "Faculty" },
+            { label: "Platform Verification Officer (Land & Users)", val: "Verification Officer" },
+            { label: "System Administrator & Compliance Lead", val: "Compliance Lead" }
+          ]
+        },
+        {
+          key: "verificationFocus",
+          title: "2. Primary review focus for this session?",
+          desc: "Customizes moderation queue.",
+          options: [
+            { label: "Landowner Ownership Records & Soil Health Verification", val: "Land Moderation" },
+            { label: "Farmer Cultivation Proposals & Active Agreements", val: "Agreement Oversight" },
+            { label: "Marketplace Product Safety & Pricing Accuracy", val: "Marketplace Audit" }
+          ]
+        },
+        {
+          key: "auditFrequency",
+          title: "3. Preferred compliance audit cadence?",
+          desc: "Frequency of moderation checks.",
+          options: [
+            { label: "Real-time Live Verification", val: "Real-time" },
+            { label: "Daily Batch Approval", val: "Daily" },
+            { label: "Academic Viva Demonstration Review", val: "Viva Review" }
+          ]
+        },
+        {
+          key: "reportFormat",
+          title: "4. Preferred summary reporting format?",
+          desc: "Export format for academic evaluation.",
+          options: [
+            { label: "Interactive Visual Dashboard with Metrics", val: "Dashboard" },
+            { label: "Printable Academic Synopsis Compliance Report", val: "Printable Report" }
+          ]
+        },
+        {
+          key: "securitySetting",
+          title: "5. Moderation auto-approval policy?",
+          desc: "Enforce strict verification or sandbox mode.",
+          options: [
+            { label: "Strict Manual Verification of all new parcels", val: "Strict Mode" },
+            { label: "1-Click Demo Sandbox Mode (Instant verification)", val: "Demo Mode" }
+          ]
+        },
+        {
+          key: "notificationPref",
+          title: "6. System alerts preference?",
+          desc: "Administrative notification channels.",
+          options: [
+            { label: "Instant browser toast notifications on submissions", val: "Toast Alerts" },
+            { label: "Digest log only", val: "Log Only" }
+          ]
+        }
+      ]
+    };
+
+    function handleInitialLogin(e) {
+      e.preventDefault();
+      const role = document.getElementById("userRole").value;
+      const email = document.getElementById("userEmail").value;
+
+      let name = email.split('@')[0].replace('.', ' ').toUpperCase();
+      let phone = "+91 98765 00000";
+
+      for (const key in DEMO_PROFILES) {
+        if (DEMO_PROFILES[key].email.toLowerCase() === email.toLowerCase()) {
+          name = DEMO_PROFILES[key].name;
+          phone = DEMO_PROFILES[key].phone;
+          break;
+        }
+      }
+
+      currentAuthUser = {
+        name: name,
+        email: email,
+        phone: phone,
+        role: role,
+        loginTime: new Date().toLocaleTimeString(),
+        answers: {}
+      };
+
+      // Switch to Stage 2: Wizard
+      document.getElementById("loginSection").classList.add("d-none");
+      document.getElementById("wizardSection").classList.remove("d-none");
+
+      // Update Left Side Panel to reflect wizard stage
+      document.getElementById("leftBadgeText").innerText = "Profile Customization";
+      document.getElementById("leftTitle").innerText = `Welcome, ${name}!`;
+      document.getElementById("leftSubtitle").innerText = `Please answer these 6 quick questions so KrishiConnect can configure your personal agricultural dashboard.`;
+      document.getElementById("userWelcomeBadge").innerText = `${name} (${role})`;
+
+      currentStep = 1;
+      renderCurrentQuestion();
+      showToast("Credentials verified! Please complete your quick profile setup.", "success");
+    }
+
+    function renderCurrentQuestion() {
+      const questions = QUESTIONS_BY_ROLE[currentAuthUser.role] || QUESTIONS_BY_ROLE["Farmer / Cultivator"];
+      const q = questions[currentStep - 1];
+
+      document.getElementById("stepBadge").innerText = `Question ${currentStep} of 6`;
+      document.getElementById("qTitle").innerText = q.title;
+      document.getElementById("qDesc").innerText = q.desc;
+
+      // Update Step Nodes visual
+      for (let i = 1; i <= 6; i++) {
+        const node = document.getElementById(`node${i}`);
+        node.className = "step-node";
+        if (i === currentStep) node.classList.add("active");
+        else if (i < currentStep) node.classList.add("completed");
+      }
+
+      // Render Options
+      const container = document.getElementById("qOptions");
+      const savedVal = userAnswers[q.key] || "";
+
+      container.innerHTML = q.options.map((opt, idx) => `
+        <div class="selectable-option ${savedVal === opt.val || (!savedVal && idx === 0) ? 'selected' : ''}" onclick="selectOption('${q.key}', '${opt.val}', this)">
+          <input type="radio" name="wizRadio" value="${opt.val}" ${savedVal === opt.val || (!savedVal && idx === 0) ? 'checked' : ''}>
+          <span class="fw-semibold text-dark small">${opt.label}</span>
+        </div>
+      `).join("");
+
+      // Default select the first if none selected
+      if (!userAnswers[q.key]) {
+        userAnswers[q.key] = q.options[0].val;
+      }
+
+      // Prev / Next button states
+      document.getElementById("prevBtn").disabled = (currentStep === 1);
+      if (currentStep === 6) {
+        document.getElementById("nextBtn").innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> Save & Open Dashboard`;
+        document.getElementById("nextBtn").className = "btn btn-success rounded-pill px-4 fw-bold shadow";
+      } else {
+        document.getElementById("nextBtn").innerHTML = `Next <i class="bi bi-arrow-right ms-1"></i>`;
+        document.getElementById("nextBtn").className = "btn btn-farm-primary rounded-pill px-4";
+      }
+    }
+
+    function selectOption(key, val, elem) {
+      document.querySelectorAll(".selectable-option").forEach(el => el.classList.remove("selected"));
+      elem.classList.add("selected");
+      elem.querySelector("input").checked = true;
+      userAnswers[key] = val;
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        renderCurrentQuestion();
+      }
+    }
+
+    function nextStep() {
+      if (currentStep < 6) {
+        currentStep++;
+        renderCurrentQuestion();
+      } else {
+        // Complete wizard: Save user with answers and redirect to dashboard
+        currentAuthUser.answers = userAnswers;
+        currentAuthUser.onboarded = true;
+        setActiveUser(currentAuthUser);
+
+        showToast("Profile preferences successfully saved! Opening your personalized dashboard...", "success");
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 700);
+      }
+    }
+  </script>
+</body>
+</html>

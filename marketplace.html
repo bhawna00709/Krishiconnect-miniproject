@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Direct Agricultural Marketplace & Bulk Negotiation - KrishiConnect</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg krishi-navbar sticky-top py-3">
+    <div class="container">
+      <a class="navbar-brand brand-logo" href="../index.html">
+        <span class="p-2 rounded-3 bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center">
+          <i class="bi bi-flower1"></i>
+        </span>
+        <span>Krishi<span style="color:#e76f51;">Connect</span></span>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#krishiNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="krishiNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="land-search.html">Find Land</a></li>
+          <li class="nav-item"><a class="nav-link active" href="marketplace.html">Agri Market</a></li>
+          <li class="nav-item"><a class="nav-link" href="mandi-prices.html">Mandi Rates</a></li>
+          <li class="nav-item"><a class="nav-link" href="agreements.html">Agreements</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About Synopsis</a></li>
+        </ul>
+        <div id="navUserArea"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Marketplace Header -->
+  <div class="bg-success text-white py-4" style="background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-7">
+          <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">DIRECT FROM CULTIVATORS</span>
+          <h2 class="fw-bold mb-1">Agricultural Harvest & Pure Farm Products</h2>
+          <p class="text-white-50 mb-0">Vegetables, Pure A2 Desi Ghee, Grains, Fruits, and Flowers with bulk order quotation and direct WhatsApp inquiries.</p>
+        </div>
+        <div class="col-md-5 text-center text-md-end mt-3 mt-md-0 d-flex flex-wrap gap-2 justify-content-center justify-content-md-end">
+          <button class="btn btn-warning fw-bold rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            <i class="bi bi-plus-circle me-1"></i> Farmer: List Produce
+          </button>
+          <button class="btn btn-outline-light rounded-pill position-relative px-3" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+            <i class="bi bi-bag me-1"></i> Cart
+            <span id="cartCountBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marketplace Content -->
+  <div class="container py-5">
+    <!-- Search & Filter Bar -->
+    <div class="row g-3 mb-4 align-items-center">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-success"></i></span>
+          <input type="text" id="marketSearch" class="form-control border-start-0" placeholder="Search tomatoes, pure cow ghee, wheat, marigold..." oninput="filterMarketplace()">
+        </div>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <span class="text-muted small"><i class="bi bi-shield-check text-success me-1"></i>Zero middleman commission • 100% direct cultivator revenue</span>
+      </div>
+    </div>
+
+    <!-- Category Pills Filter -->
+    <div class="d-flex flex-wrap gap-2 mb-4 justify-content-center" id="categoryPills">
+      <button class="btn btn-outline-success active rounded-pill px-4 btn-sm" onclick="filterCategory('All', this)">All Categories</button>
+      <button class="btn btn-outline-success rounded-pill px-3 btn-sm" onclick="filterCategory('Vegetables', this)"><i class="bi bi-carrot me-1"></i>Vegetables</button>
+      <button class="btn btn-outline-success rounded-pill px-3 btn-sm" onclick="filterCategory('Dairy', this)"><i class="bi bi-droplet-half me-1"></i>Dairy (Milk/Ghee/Curd)</button>
+      <button class="btn btn-outline-success rounded-pill px-3 btn-sm" onclick="filterCategory('Grains', this)"><i class="bi bi-boxes me-1"></i>Grains & Cereals</button>
+      <button class="btn btn-outline-success rounded-pill px-3 btn-sm" onclick="filterCategory('Fruits', this)"><i class="bi bi-apple me-1"></i>Fresh Fruits</button>
+      <button class="btn btn-outline-success rounded-pill px-3 btn-sm" onclick="filterCategory('Flowers', this)"><i class="bi bi-flower2 me-1"></i>Flowers</button>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row g-4" id="productsGrid">
+      <!-- Injected via JavaScript -->
+    </div>
+  </div>
+
+  <!-- Cart Offcanvas -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+    <div class="offcanvas-header bg-success text-white">
+      <h5 class="offcanvas-title fw-bold"><i class="bi bi-basket2 me-2"></i>Your Harvest Cart</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+      <div id="cartItemsList" class="flex-grow-1">
+        <!-- Render cart items -->
+      </div>
+      <div class="border-top pt-3 mt-3">
+        <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+          <span>Total Payable:</span>
+          <span class="text-success" id="cartTotalText">₹ 0</span>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted">Delivery Address / Destination Mandi</label>
+          <input type="text" id="orderAddress" class="form-control form-control-sm" placeholder="House/Shop No, Mandi or City, PIN code" value="Meerut Central APMC Market">
+        </div>
+        <button class="btn btn-farm-primary w-100 py-2 rounded-pill mb-2" onclick="checkoutOrder()">
+          <i class="bi bi-bag-check-fill me-2"></i> Confirm Farm-Direct Order
+        </button>
+        <button class="btn btn-outline-success w-100 py-1 rounded-pill small" onclick="orderViaWhatsApp()">
+          <i class="bi bi-whatsapp me-2"></i> Order & Inquire via WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- List Produce Modal -->
+  <div class="modal fade" id="addProductModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Farmer Produce Listing</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="newProductForm" onsubmit="saveNewProduct(event)">
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Product Name</label>
+              <input type="text" id="newProdName" class="form-control" placeholder="e.g. Fresh Organic Shimla Mirch" required>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Category</label>
+                <select id="newProdCategory" class="form-select" required>
+                  <option value="Vegetables">Vegetables</option>
+                  <option value="Dairy">Dairy (Milk/Curd/Ghee)</option>
+                  <option value="Grains">Grains & Pulses</option>
+                  <option value="Fruits">Fruits</option>
+                  <option value="Flowers">Flowers</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Price (₹ INR)</label>
+                <input type="number" id="newProdPrice" class="form-control" placeholder="e.g. 40" required>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Unit</label>
+                <input type="text" id="newProdUnit" class="form-control" placeholder="e.g. per kg / Liter" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Available Stock</label>
+                <input type="text" id="newProdStock" class="form-control" placeholder="e.g. 500 kg" required>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Farmer Name</label>
+                <input type="text" id="newProdFarmer" class="form-control" placeholder="e.g. Kisan Rajesh" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Farm Location</label>
+                <input type="text" id="newProdLoc" class="form-control" placeholder="e.g. Meerut, UP" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Short Description</label>
+              <textarea id="newProdDesc" class="form-control" rows="2" placeholder="Quality specs, harvest freshness, grade..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-farm-primary rounded-pill">Publish Produce</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto">
+    <div class="container text-center py-4 text-secondary small">
+      © 2026 KrishiConnect Agricultural Direct Marketplace - Synopsis Mini Project
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/gemini-chat.js"></script>
+  <script>
+    let productsList = [];
+    let cart = [];
+    let activeCat = 'All';
+
+    document.addEventListener("DOMContentLoaded", () => {
+      productsList = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.PRODUCTS)) || DEFAULT_PRODUCTS;
+      
+      const user = getActiveUser();
+      if (user) {
+        document.getElementById("newProdFarmer").value = user.name;
+        if (user.location) document.getElementById("newProdLoc").value = user.location;
+      }
+
+      renderProducts();
+      updateCartUI();
+    });
+
+    function filterCategory(cat, btn) {
+      activeCat = cat;
+      document.querySelectorAll('#categoryPills button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderProducts();
+    }
+
+    function filterMarketplace() {
+      const q = document.getElementById("marketSearch").value.toLowerCase();
+      const container = document.getElementById("productsGrid");
+      const filtered = productsList.filter(p => {
+        const matchesCat = activeCat === 'All' || p.category === activeCat;
+        const matchesQuery = !q || p.name.toLowerCase().includes(q) || p.farmerName.toLowerCase().includes(q) || p.location.toLowerCase().includes(q);
+        return matchesCat && matchesQuery;
+      });
+
+      renderFilteredProducts(filtered);
+    }
+
+    function renderProducts() {
+      const filtered = activeCat === 'All' ? productsList : productsList.filter(p => p.category === activeCat);
+      renderFilteredProducts(filtered);
+    }
+
+    function renderFilteredProducts(filtered) {
+      const container = document.getElementById("productsGrid");
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-12 text-center py-5 text-muted">No products found matching your search.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(prod => `
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="position-relative">
+              <img src="${prod.image}" alt="${prod.name}" class="w-100" style="height: 220px; object-fit: cover;">
+              <span class="badge bg-success position-absolute top-0 end-0 m-3 rounded-pill">${prod.category}</span>
+            </div>
+            <div class="p-4 d-flex flex-column">
+              <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
+                <span><i class="bi bi-geo-alt me-1"></i>${prod.location}</span>
+                <span><i class="bi bi-calendar3 me-1"></i>${prod.harvestDate || 'Fresh Stock'}</span>
+              </div>
+              <h5 class="fw-bold mb-1">${prod.name}</h5>
+              <div class="text-success small fw-semibold mb-2">
+                <i class="bi bi-person-circle me-1"></i>${prod.farmerName}
+              </div>
+              <p class="text-muted small mb-3 flex-grow-1">${prod.description}</p>
+              
+              <div class="d-flex align-items-center justify-content-between mb-3 p-2 bg-light rounded-3 small">
+                <span>Available: <strong>${prod.availableQty}</strong></span>
+                <span class="badge bg-light text-success border border-success">Pesticide Safe</span>
+              </div>
+
+              <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                <div>
+                  <span class="fs-4 fw-extrabold text-success">₹ ${prod.price}</span>
+                  <span class="text-muted small">/${prod.unit}</span>
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline-success btn-sm rounded-circle px-2" onclick="shareOnWhatsApp('${prod.name}', 'Price: ₹ ${prod.price}/${prod.unit} from Farmer ${prod.farmerName} in ${prod.location}')" title="Share Product on WhatsApp">
+                    <i class="bi bi-whatsapp"></i>
+                  </button>
+                  <button class="btn btn-farm-primary btn-sm px-3" onclick="addToCart('${prod.id}')">
+                    <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function addToCart(prodId) {
+      const prod = productsList.find(p => p.id === prodId);
+      if (!prod) return;
+
+      const existing = cart.find(c => c.id === prodId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...prod, qty: 1 });
+      }
+
+      updateCartUI();
+      showToast(`Added ${prod.name} to cart!`, "success");
+    }
+
+    function updateCartUI() {
+      const countBadge = document.getElementById("cartCountBadge");
+      const list = document.getElementById("cartItemsList");
+      const totalEl = document.getElementById("cartTotalText");
+
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      countBadge.innerText = totalItems;
+
+      if (cart.length === 0) {
+        list.innerHTML = `<div class="text-center text-muted py-5"><i class="bi bi-cart-x fs-1 d-block mb-2"></i>Cart is currently empty.</div>`;
+        totalEl.innerText = "₹ 0";
+        return;
+      }
+
+      let grandTotal = 0;
+      list.innerHTML = cart.map((item, idx) => {
+        const itemTotal = item.price * item.qty;
+        grandTotal += itemTotal;
+        return `
+          <div class="d-flex align-items-center justify-content-between p-2 border-bottom">
+            <div>
+              <div class="fw-bold small">${item.name}</div>
+              <div class="text-muted" style="font-size:0.75rem;">₹ ${item.price} x ${item.qty}</div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="fw-bold text-success small">₹ ${itemTotal}</span>
+              <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="removeCartItem(${idx})">&times;</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      totalEl.innerText = `₹ ${grandTotal}`;
+    }
+
+    function removeCartItem(idx) {
+      cart.splice(idx, 1);
+      updateCartUI();
+    }
+
+    function checkoutOrder() {
+      if (cart.length === 0) {
+        showToast("Cart is empty!", "danger");
+        return;
+      }
+
+      const order = {
+        orderId: "ORD-" + Math.floor(1000 + Math.random() * 9000),
+        items: [...cart],
+        date: new Date().toLocaleDateString(),
+        total: document.getElementById("cartTotalText").innerText,
+        destination: document.getElementById("orderAddress").value || "Direct Farmer Dispatch",
+        status: "Confirmed by Cultivator"
+      };
+
+      const orders = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.ORDERS)) || [];
+      orders.push(order);
+      localStorage.setItem(KRISHI_STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+
+      cart = [];
+      updateCartUI();
+
+      bootstrap.Offcanvas.getInstance(document.getElementById("cartOffcanvas")).hide();
+      showToast(`Order #${order.orderId} placed directly with cultivator! Delivery logistics initiated.`, "success");
+    }
+
+    function orderViaWhatsApp() {
+      if (cart.length === 0) {
+        showToast("Cart is empty!", "danger");
+        return;
+      }
+      const summary = cart.map(i => `${i.name} (${i.qty} units @ ₹${i.price})`).join(", ");
+      const total = document.getElementById("cartTotalText").innerText;
+      shareOnWhatsApp("Farm Direct Harvest Order Inquiry", `Order Items: ${summary}\nTotal Amount: ${total}`);
+    }
+
+    function saveNewProduct(e) {
+      e.preventDefault();
+      const newP = {
+        id: "PRD-" + Math.floor(300 + Math.random() * 700),
+        name: document.getElementById("newProdName").value,
+        category: document.getElementById("newProdCategory").value,
+        price: parseFloat(document.getElementById("newProdPrice").value),
+        unit: document.getElementById("newProdUnit").value,
+        availableQty: document.getElementById("newProdStock").value,
+        farmerName: document.getElementById("newProdFarmer").value,
+        location: document.getElementById("newProdLoc").value,
+        harvestDate: "Just now",
+        image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80",
+        description: document.getElementById("newProdDesc").value || "Fresh farm produce harvested directly from KrishiConnect fields."
+      };
+
+      productsList.unshift(newP);
+      localStorage.setItem(KRISHI_STORAGE_KEYS.PRODUCTS, JSON.stringify(productsList));
+
+      bootstrap.Modal.getInstance(document.getElementById("addProductModal")).hide();
+      showToast(`Produce "${newP.name}" published to Krishi Marketplace!`, "success");
+      renderProducts();
+    }
+  </script>
+</body>
+</html>

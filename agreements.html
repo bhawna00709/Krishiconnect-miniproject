@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Land-Use Agreement Module - KrishiConnect</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printableAgreement, #printableAgreement * { visibility: visible; }
+      #printableAgreement { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg krishi-navbar sticky-top py-3 no-print">
+    <div class="container">
+      <a class="navbar-brand brand-logo" href="../index.html">
+        <span class="p-2 rounded-3 bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center">
+          <i class="bi bi-flower1"></i>
+        </span>
+        <span>Krishi<span style="color:#e76f51;">Connect</span></span>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#krishiNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="krishiNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="land-search.html">Find Land</a></li>
+          <li class="nav-item"><a class="nav-link" href="marketplace.html">Agri Market</a></li>
+          <li class="nav-item"><a class="nav-link" href="mandi-prices.html">Mandi Rates</a></li>
+          <li class="nav-item"><a class="nav-link active" href="agreements.html">Agreements</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About Synopsis</a></li>
+        </ul>
+        <div id="navUserArea"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Banner -->
+  <div class="bg-success text-white py-4 no-print" style="background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-between">
+        <div>
+          <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">NITI AAYOG MODEL GUIDELINES</span>
+          <h2 class="fw-bold mb-1">Agricultural Land-Use & Cultivation Agreements</h2>
+          <p class="text-white-50 mb-0">Record formal terms between absentee landowners and cultivators for duration, profit-share, inputs and produce rights.</p>
+        </div>
+        <div class="mt-3 mt-md-0 d-flex flex-wrap gap-2 justify-content-center justify-content-md-end">
+          <button class="btn btn-warning rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#createAgreementModal">
+            <i class="bi bi-file-earmark-plus me-1"></i> Draft New Agreement
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-5">
+    <!-- Legal Context Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-light no-print">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h5 class="fw-bold text-success mb-2"><i class="bi bi-shield-check me-2"></i>Structured Academic Agreement Framework</h5>
+          <p class="text-muted small mb-0">
+            Based on the NITI Aayog Expert Committee Report on Agricultural Land Leasing (2016). This module provides structured digital documentation between the parties without creating tenancy rights or land loss risks, protecting both the absentee landowner and cultivating tenant.
+          </p>
+        </div>
+        <div class="col-lg-4 text-center text-lg-end mt-3 mt-lg-0">
+          <span class="stamp-badge">
+            <i class="bi bi-check2-all me-1"></i> Verified Model Record
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Agreements Display -->
+    <h4 class="fw-bold mb-3 no-print">Recorded Land-Use Agreements</h4>
+    <div class="row g-4" id="agreementsContainer">
+      <!-- Injected via JavaScript -->
+    </div>
+  </div>
+
+  <!-- Draft Agreement Modal -->
+  <div class="modal fade" id="createAgreementModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-file-text me-2"></i>Draft Cultivation Agreement</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="newAgrForm" onsubmit="saveAgreement(event)">
+          <div class="modal-body p-4">
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Landowner Name</label>
+                <input type="text" id="agrOwner" class="form-control" placeholder="Full name of owner" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Cultivator / Farmer Name</label>
+                <input type="text" id="agrFarmer" class="form-control" placeholder="Full name of farmer" required>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-8">
+                <label class="form-label small fw-semibold">Associated Land Parcel Title & Location</label>
+                <input type="text" id="agrLandTitle" class="form-control" placeholder="e.g. 5.5 Acres Plot - Meerut District" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Agreement Duration</label>
+                <input type="text" id="agrDuration" class="form-control" placeholder="e.g. 24 Months (2026-2028)" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Payment / Profit Sharing Consideration</label>
+              <input type="text" id="agrConsideration" class="form-control" placeholder="e.g. ₹ 45,000 / Acre fixed rent OR 30% produce revenue share" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Input Responsibilities (Seeds, Fertilizers, Electricity, Irrigation)</label>
+              <textarea id="agrTerms" class="form-control" rows="3" placeholder="Specify who bears seed/fertilizer costs and electricity bills..." required></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Produce Ownership & Marketing Rights</label>
+              <input type="text" id="agrProduce" class="form-control" placeholder="e.g. Cultivator retains 100% marketing right on final yield with audited proceeds" required>
+            </div>
+
+            <div class="form-check small text-muted">
+              <input class="form-check-input" type="checkbox" id="agrConsent" checked required>
+              <label class="form-check-label" for="agrConsent">
+                Both parties digitally acknowledge and accept the stipulated cultivation terms.
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-farm-primary rounded-pill">Formalize & Save Agreement</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print View Container -->
+  <div id="printableAgreement" style="display:none;" class="p-5"></div>
+
+  <!-- Footer -->
+  <footer class="mt-auto no-print">
+    <div class="container text-center py-4 text-secondary small">
+      © 2026 KrishiConnect - Department of CSE, Lloyd Institute of Engineering & Technology
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/gemini-chat.js"></script>
+  <script>
+    let agreementsList = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      agreementsList = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.AGREEMENTS)) || DEFAULT_AGREEMENTS;
+      renderAgreements();
+
+      const u = getActiveUser();
+      if (u) {
+        if (u.role === 'Landowner') {
+          document.getElementById('agrOwner').value = u.name;
+        } else if (u.role.includes('Farmer')) {
+          document.getElementById('agrFarmer').value = u.name;
+        }
+      }
+    });
+
+    function renderAgreements() {
+      const container = document.getElementById("agreementsContainer");
+      if (agreementsList.length === 0) {
+        container.innerHTML = `<div class="col-12 text-center py-5 text-muted">No agreements recorded yet.</div>`;
+        return;
+      }
+
+      container.innerHTML = agreementsList.map(agr => `
+        <div class="col-lg-6">
+          <div class="agreement-paper h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+              <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-1">
+                <i class="bi bi-file-earmark-check-fill me-1"></i> ${agr.id}
+              </span>
+              <span class="stamp-badge small">${agr.status}</span>
+            </div>
+
+            <h5 class="fw-bold mb-2 text-dark">${agr.landTitle}</h5>
+
+            <div class="row g-2 mb-3 small bg-white p-3 rounded-3 border">
+              <div class="col-6"><strong>Landowner:</strong> ${agr.landowner}</div>
+              <div class="col-6"><strong>Cultivator:</strong> ${agr.farmer}</div>
+              <div class="col-6"><strong>Duration:</strong> ${agr.duration}</div>
+              <div class="col-6"><strong>Created On:</strong> ${agr.createdOn}</div>
+            </div>
+
+            <div class="small mb-3">
+              <strong class="text-success d-block mb-1"><i class="bi bi-cash-coin me-1"></i>Financial Consideration:</strong>
+              <div class="text-muted">${agr.consideration}</div>
+            </div>
+
+            <div class="small mb-3">
+              <strong class="text-success d-block mb-1"><i class="bi bi-gear-wide-connected me-1"></i>Mutual Operational Terms:</strong>
+              <div class="text-muted">${agr.terms}</div>
+            </div>
+
+            <div class="small mb-3">
+              <strong class="text-success d-block mb-1"><i class="bi bi-basket me-1"></i>Ownership of Produce:</strong>
+              <div class="text-muted">${agr.ownershipOfProduce}</div>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-center justify-content-sm-between align-items-center gap-2 border-top pt-3">
+              <button class="btn btn-outline-success btn-sm rounded-pill" onclick="shareOnWhatsApp('Formalized Land Agreement: ${agr.id}', 'Land: ${agr.landTitle}\nParties: ${agr.landowner} & ${agr.farmer}\nTerms: ${agr.consideration}')">
+                <i class="bi bi-whatsapp me-1"></i> Share
+              </button>
+              <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="printAgreementCert('${agr.id}')">
+                <i class="bi bi-printer me-1"></i> Official PDF Certificate
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function printAgreementCert(agrId) {
+      const agr = agreementsList.find(a => a.id === agrId);
+      if (!agr) return;
+
+      const printEl = document.getElementById("printableAgreement");
+      printEl.style.display = "block";
+      printEl.innerHTML = `
+        <div style="border: 3px double #1b4332; padding: 40px; font-family: sans-serif; background: #fff;">
+          <div style="text-align: center; border-bottom: 2px solid #1b4332; padding-bottom: 15px; margin-bottom: 25px;">
+            <h2 style="color: #1b4332; margin-bottom: 5px;">KRISHICONNECT AGRICULTURAL REVENUE MODULE</h2>
+            <div style="font-size: 14px; color: #666;">Model Land-Use & Cultivation Certificate (NITI Aayog Framework)</div>
+            <div style="font-weight: bold; margin-top: 5px; color: #d4a373;">Certificate ID: ${agr.id}</div>
+          </div>
+
+          <h3 style="color: #2d6a4f; margin-bottom: 15px;">Parcel: ${agr.landTitle}</h3>
+          
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;" border="1" cellpadding="8">
+            <tr><td style="width: 30%;"><strong>Landowner</strong></td><td>${agr.landowner}</td></tr>
+            <tr><td><strong>Cultivator / Tenant</strong></td><td>${agr.farmer}</td></tr>
+            <tr><td><strong>Agreed Tenure</strong></td><td>${agr.duration}</td></tr>
+            <tr><td><strong>Financial Consideration</strong></td><td>${agr.consideration}</td></tr>
+            <tr><td><strong>Input Responsibilities</strong></td><td>${agr.terms}</td></tr>
+            <tr><td><strong>Produce Ownership Rights</strong></td><td>${agr.ownershipOfProduce}</td></tr>
+            <tr><td><strong>Status</strong></td><td>${agr.status} (Recorded digitally on ${agr.createdOn})</td></tr>
+          </table>
+
+          <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+            <div>
+              <div style="border-top: 1px solid #333; width: 200px; text-align: center; padding-top: 5px;">
+                Signature of Landowner<br><small>(${agr.landowner})</small>
+              </div>
+            </div>
+            <div>
+              <div style="border-top: 1px solid #333; width: 200px; text-align: center; padding-top: 5px;">
+                Signature of Cultivator<br><small>(${agr.farmer})</small>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #888;">
+            Department of Computer Science & Engineering, Lloyd Institute of Engineering & Technology, Greater Noida
+          </div>
+        </div>
+      `;
+
+      window.print();
+      printEl.style.display = "none";
+    }
+
+    function saveAgreement(e) {
+      e.preventDefault();
+      const newAgr = {
+        id: "AGR-2026-" + Math.floor(100 + Math.random() * 900),
+        landId: "LND-GEN",
+        landTitle: document.getElementById("agrLandTitle").value,
+        landowner: document.getElementById("agrOwner").value,
+        farmer: document.getElementById("agrFarmer").value,
+        duration: document.getElementById("agrDuration").value,
+        terms: document.getElementById("agrTerms").value,
+        consideration: document.getElementById("agrConsideration").value,
+        ownershipOfProduce: document.getElementById("agrProduce").value,
+        status: "Active & Recorded",
+        createdOn: new Date().toISOString().split('T')[0]
+      };
+
+      agreementsList.unshift(newAgr);
+      localStorage.setItem(KRISHI_STORAGE_KEYS.AGREEMENTS, JSON.stringify(agreementsList));
+
+      bootstrap.Modal.getInstance(document.getElementById("createAgreementModal")).hide();
+      showToast(`Land agreement ${newAgr.id} successfully formalized and recorded!`, "success");
+      renderAgreements();
+    }
+  </script>
+</body>
+</html>
