@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KrishiConnect - Connecting Agricultural Land with Cultivators & Direct Farm Marketplace</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Leaflet CSS for OpenStreetMap Interactive Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <!-- Google Fonts Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom Krishi Style -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-success text-white py-1 px-3 d-none d-md-block text-center small fw-semibold" style="background-color: #1b4332 !important;">
+    <div class="container d-flex justify-content-between align-items-center">
+      <span>
+        <i class="bi bi-patch-check-fill text-warning me-1"></i> KrishiConnect Digital Agriculture Platform | Transforming Unused Land into Productive Green Fields
+      </span>
+      <div class="d-flex align-items-center gap-3">
+        <span><i class="bi bi-cloud-sun text-warning me-1"></i> Western UP / NCR: 28°C Optimal Rabi Sowing</span>
+        <span><i class="bi bi-graph-up-arrow text-warning me-1"></i> e-NAM Live Mandi Sync</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header / Navigation Bar -->
+  <nav class="navbar navbar-expand-lg krishi-navbar sticky-top">
+    <div class="container">
+      <a class="navbar-brand brand-logo" href="index.html">
+        <span class="p-2 rounded-3 bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center">
+          <i class="bi bi-flower1"></i>
+        </span>
+        <span>Krishi<span style="color:#e76f51;">Connect</span></span>
+        <span class="brand-badge d-none d-sm-inline-block">B.Tech Project</span>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#krishiNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="krishiNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/land-search.html">Find Land</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/marketplace.html">Agri Market</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/mandi-prices.html">Mandi Rates</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/agreements.html">Agreements</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/about.html">About</a></li>
+        </ul>
+
+        <!-- Dynamic User Area with Light/Dark Mode Switcher & Login/Register -->
+        <div id="navUserArea">
+          <!-- Populated with equal padding and aligned controls by app.js -->
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LIGHT HERO SECTION (High Readability, Warm Farm Aesthetics, Clear Text) -->
+  <header class="hero-section-light text-center text-lg-start">
+    <div class="container">
+      <div class="row align-items-center gy-5">
+        <div class="col-lg-7">
+          <div class="hero-pill-light mb-3">
+            <i class="bi bi-shield-check text-success"></i>
+            <span>Interactive GIS Discovery • Model Land Lease • Direct Farm Trade</span>
+          </div>
+          <h1 class="display-4 fw-extrabold mb-3 lh-sm text-dark">
+            Connecting <span style="color: #2d6a4f;">Unused Farmland</span> with Dedicated Cultivators
+          </h1>
+          <p class="lead mb-4 text-muted fw-normal" style="font-size: 1.15rem; line-height: 1.6;">
+            Turn vacant and absentee-owner land into high-yielding productive green fields. KrishiConnect provides GIS spatial parcel discovery, NITI Aayog model land-use agreements, e-NAM market price intelligence, and zero-commission farm-to-table commerce.
+          </p>
+
+          <div class="d-flex flex-wrap gap-3 mb-4 justify-content-center justify-content-lg-start align-items-center hero-btn-group">
+            <a href="pages/land-search.html" class="btn btn-farm-primary btn-lg px-4">
+              <i class="bi bi-search me-2"></i>Explore Available Land
+            </a>
+            <a href="pages/register.html?role=landowner" class="btn btn-farm-outline btn-lg px-4">
+              <i class="bi bi-plus-circle me-2"></i>List Your Land
+            </a>
+            <a href="pages/marketplace.html" class="btn btn-farm-accent btn-lg px-4">
+              <i class="bi bi-basket2 me-2"></i>Buy Fresh Harvest
+            </a>
+
+            <!-- Voice Assistant Audio Button -->
+            <button class="voice-mic-btn ms-lg-1" onclick="triggerVoiceHelp()" title="Kisan Voice Assistant (हिंदी / Audio Guide)">
+              <i class="bi bi-mic-fill"></i>
+            </button>
+          </div>
+
+          <!-- Synopsis Highlights Stats (Light & Clean) -->
+          <div class="row g-2 g-sm-3 text-start mb-4 hero-stats-row justify-content-center">
+            <div class="col-4">
+              <div class="border-start border-3 border-warning ps-2 ps-sm-3">
+                <h3 class="fw-bold mb-0 text-dark">4 Roles</h3>
+                <small class="text-muted">Landowners, Farmers, Buyers, Admin</small>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="border-start border-3 border-success ps-2 ps-sm-3">
+                <h3 class="fw-bold mb-0 text-dark">GIS Mapped</h3>
+                <small class="text-muted">OpenStreetMap & Satellite</small>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="border-start border-3 border-info ps-2 ps-sm-3">
+                <h3 class="fw-bold mb-0 text-dark">e-NAM Live</h3>
+                <small class="text-muted">Daily Mandi Prices</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Weather & Agro-Advisory Banner (Light & High Contrast) -->
+          <div class="weather-widget-bar-light">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+              <div class="weather-metric">
+                <i class="bi bi-sun-fill"></i>
+                <div>
+                  <div class="fw-bold fs-6">28°C • Sunny & Clear</div>
+                  <small class="text-muted">Meerut - Bulandshahr Belt (Western UP)</small>
+                </div>
+              </div>
+              <div class="d-flex gap-3 small text-muted">
+                <span><i class="bi bi-droplet-half text-info me-1"></i>Humidity: <strong>55%</strong></span>
+                <span><i class="bi bi-wind text-primary me-1"></i>Wind: <strong>9 km/h NW</strong></span>
+              </div>
+              <div class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill fw-bold">
+                <i class="bi bi-bell-fill me-1"></i> Advisory: Optimal Rabi Wheat & Mustard Sowing Window
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <!-- Quick Interactive Discovery Box -->
+          <div class="card border-0 shadow-lg rounded-4 p-4 text-dark bg-white">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+              <div>
+                <h5 class="fw-bold mb-0 text-success"><i class="bi bi-compass me-2"></i>Quick Land Finder</h5>
+                <small class="text-muted">Find fertile ground across Western UP & NCR</small>
+              </div>
+              <span class="badge bg-success bg-opacity-10 text-success p-2 rounded-pill fw-bold">Active Acreage</span>
+            </div>
+
+            <form action="pages/land-search.html" method="GET">
+              <div class="mb-3">
+                <label class="form-label small fw-semibold text-muted">Preferred District / Location</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-geo-alt text-success"></i></span>
+                  <select name="location" class="form-select bg-light border-start-0">
+                    <option value="">All Regions (Western UP / NCR)</option>
+                    <option value="Meerut">Meerut District</option>
+                    <option value="Bulandshahr">Bulandshahr</option>
+                    <option value="Greater Noida">Greater Noida / Jewar</option>
+                    <option value="Aligarh">Aligarh Belt</option>
+                    <option value="Hapur">Hapur Bypass</option>
+                    <option value="Baghpat">Baghpat Yamuna Belt</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <label class="form-label small fw-semibold text-muted">Minimum Area</label>
+                  <select name="minArea" class="form-select bg-light">
+                    <option value="">Any Size</option>
+                    <option value="2">2+ Acres</option>
+                    <option value="5">5+ Acres</option>
+                    <option value="10">10+ Acres</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label class="form-label small fw-semibold text-muted">Terms Model</label>
+                  <select name="terms" class="form-select bg-light">
+                    <option value="">Any Model</option>
+                    <option value="lease">Annual Cash Lease</option>
+                    <option value="share">Crop / Profit Sharing (70/30)</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-farm-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-search"></i> Search Available Land Now
+              </button>
+            </form>
+
+            <!-- WhatsApp Direct Inquiries -->
+            <div class="mt-3 pt-3 border-top d-flex align-items-center justify-content-between text-muted small">
+              <span><i class="bi bi-check-circle-fill text-success me-1"></i>Verified Water Source</span>
+              <a href="javascript:void(0)" onclick="shareOnWhatsApp('KrishiConnect Farmland Finder', 'Looking for fertile farmland in UP. Visit KrishiConnect Platform!')" class="text-success text-decoration-none fw-bold">
+                <i class="bi bi-whatsapp me-1"></i> Share via WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive OpenStreetMap & Satellite Farmland Map Section -->
+  <section class="py-5 bg-white border-bottom">
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div>
+          <span class="badge bg-success bg-opacity-10 text-success px-3 py-1 rounded-pill fw-bold mb-2">GEOGRAPHIC DISCOVERY</span>
+          <h2 class="fw-bold mb-1">Interactive Agricultural Land Map</h2>
+          <p class="text-muted mb-0">Inspect fallow acreage, soil types, and tubewell access with layer switcher (Topo & Satellite).</p>
+        </div>
+        <div class="mt-3 mt-md-0 d-flex gap-2 header-actions-mobile-center">
+          <button class="btn btn-outline-success btn-sm rounded-pill px-3" onclick="centerMapOnUP()">
+            <i class="bi bi-crosshair me-1"></i> Recenter Western UP
+          </button>
+          <a href="pages/land-search.html" class="btn btn-farm-primary btn-sm rounded-pill px-3">
+            <i class="bi bi-funnel me-1"></i> Open Advanced Filters
+          </a>
+        </div>
+      </div>
+
+      <!-- Map Display Container -->
+      <div id="krishiMapContainer" class="shadow-sm mb-3"></div>
+      <div class="d-flex flex-wrap gap-4 justify-content-center text-muted small mt-2">
+        <span><i class="bi bi-geo-alt-fill text-success me-1"></i>Green Pins: Verified Fertile Land</span>
+        <span><i class="bi bi-droplet-fill text-primary me-1"></i>Verified High-Capacity Tubewell / Canal</span>
+        <span><i class="bi bi-layers-fill text-secondary me-1"></i>Toggle Topo / Satellite at top-right of map</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- NITI Aayog Model Yield & Profit-Sharing Calculator -->
+  <section class="py-5 bg-light-subtle">
+    <div class="container">
+      <div class="row align-items-center gy-4">
+        <div class="col-lg-5">
+          <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">FINANCIAL SIMULATOR</span>
+          <h2 class="fw-bold mb-3">Cultivation Yield & Profit Sharing Calculator</h2>
+          <p class="text-muted small">
+            Transparently model your expected financial outcome under either a **Fixed Cash Lease** or **NITI Aayog Model 70/30 Profit-Sharing**.
+          </p>
+
+          <form id="calcForm" oninput="runYieldCalculation()">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Target Farmland Area (Acres)</label>
+              <input type="number" id="calcAcres" class="form-control" value="5" min="1" max="100">
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Intended Crop</label>
+                <select id="calcCrop" class="form-select">
+                  <option value="wheat" data-yield="20" data-price="2540" data-cost="16000">Wheat (Gehun)</option>
+                  <option value="paddy" data-yield="25" data-price="3980" data-cost="22000">Basmati Paddy</option>
+                  <option value="mustard" data-yield="12" data-price="5620" data-cost="14000">Mustard (Sarson)</option>
+                  <option value="sugarcane" data-yield="350" data-price="380" data-cost="42000">Sugarcane</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Tenure Model</label>
+                <select id="calcModel" class="form-select">
+                  <option value="profitShare">70% Farmer / 30% Owner</option>
+                  <option value="fixedRent">Fixed ₹ 45,000 / Acre Rent</option>
+                </select>
+              </div>
+            </div>
+          </form>
+
+          <div class="p-3 bg-white border rounded-3 small text-muted">
+            <i class="bi bi-shield-check text-success me-1"></i> Eliminates informal disputes with predetermined consideration.
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <h5 class="fw-bold text-success mb-3 pb-2 border-bottom"><i class="bi bi-pie-chart-fill me-2"></i>Estimated Season Financial Projection</h5>
+            
+            <div class="row g-2 g-sm-3 mb-4 text-center">
+              <div class="col-4">
+                <div class="p-2 p-sm-3 bg-light rounded-3">
+                  <small class="text-muted d-block" style="font-size: 0.72rem;">Gross Harvest</small>
+                  <h4 class="fw-bold text-dark mt-1 mb-0 fs-6 fs-sm-4" id="resGross">₹ 2,54,000</h4>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 p-sm-3 bg-light rounded-3">
+                  <small class="text-muted d-block" style="font-size: 0.72rem;">Operational Cost</small>
+                  <h4 class="fw-bold text-danger mt-1 mb-0 fs-6 fs-sm-4" id="resCost">₹ 80,000</h4>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 p-sm-3 bg-light rounded-3">
+                  <small class="text-muted d-block" style="font-size: 0.72rem;">Net Farm Profit</small>
+                  <h4 class="fw-bold text-success mt-1 mb-0 fs-6 fs-sm-4" id="resNet">₹ 1,74,000</h4>
+                </div>
+              </div>
+            </div>
+
+            <!-- Distribution breakdown -->
+            <div class="p-3 bg-success bg-opacity-10 rounded-3 mb-3 border border-success border-opacity-25">
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-1 mb-2">
+                <span class="fw-bold text-success small"><i class="bi bi-person-workspace me-1"></i>Cultivator Share (70%):</span>
+                <span class="fs-5 fw-extrabold text-success" id="resFarmerShare">₹ 1,21,800</span>
+              </div>
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-1">
+                <span class="fw-bold text-primary small"><i class="bi bi-house-door me-1"></i>Landowner Share (30%):</span>
+                <span class="fs-5 fw-extrabold text-primary" id="resOwnerShare">₹ 52,200</span>
+              </div>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-center justify-content-sm-between align-items-center gap-2">
+              <button class="btn btn-outline-success btn-sm rounded-pill" onclick="shareOnWhatsApp('Crop Yield Estimation', 'Projected net profit ₹ 1,74,000 for 5 Acres under KrishiConnect')">
+                <i class="bi bi-whatsapp me-1"></i> Share Projection
+              </button>
+              <a href="pages/agreements.html" class="btn btn-farm-primary btn-sm rounded-pill px-4">
+                <i class="bi bi-file-earmark-check me-1"></i> Record Terms
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Available Farmland Section (Cards with Verified High-Res Photos) -->
+  <section class="py-5 bg-white">
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div>
+          <span class="text-success fw-bold text-uppercase small tracking-wide">Featured Farmland</span>
+          <h2 class="fw-bold mb-1">Available Agricultural Lands for Cultivation</h2>
+          <p class="text-muted mb-0">Discover verified fertile acreage ready for lease or crop-share partnership.</p>
+        </div>
+        <a href="pages/land-search.html" class="btn btn-outline-success rounded-pill fw-semibold mt-3 mt-md-0">
+          View All 6 Listings <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+
+      <div class="row g-4" id="homeLandsContainer">
+        <!-- Rendered dynamically from 6 verified seed parcels -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Fresh Farm Produce Marketplace Showcase (All Working Images) -->
+  <section class="py-5 bg-light-subtle">
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div>
+          <span class="text-warning-emphasis fw-bold text-uppercase small">Direct From Farm</span>
+          <h2 class="fw-bold mb-1">Fresh Harvest, Grains & Pure Dairy Marketplace</h2>
+          <p class="text-muted mb-0">Support local cultivators. Buy fresh grains, vegetables, flowers, pure A2 ghee and milk.</p>
+        </div>
+        <a href="pages/marketplace.html" class="btn btn-outline-dark rounded-pill fw-semibold mt-3 mt-md-0">
+          Visit Marketplace <i class="bi bi-basket2 ms-1"></i>
+        </a>
+      </div>
+
+      <div class="row g-4" id="homeProductsContainer">
+        <!-- Rendered dynamically from 8 verified produce items -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Mandi Rates Preview Bar with Chart Link -->
+  <section class="py-5 bg-white border-top border-bottom">
+    <div class="container">
+      <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge bg-danger rounded-pill px-3 py-1">LIVE COMMODITY RATES</span>
+            <span class="text-muted small"><i class="bi bi-clock me-1"></i>Updated Daily via e-NAM Aggregator</span>
+          </div>
+          <h3 class="fw-bold mb-0">Today's Agricultural Commodity Rates</h3>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0 d-flex flex-wrap gap-2 justify-content-center justify-content-md-end">
+          <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="openPriceAlertModal()">
+            <i class="bi bi-bell-fill me-1"></i> Set Rate Alert
+          </button>
+          <a href="pages/mandi-prices.html" class="btn btn-farm-outline btn-sm">Full Mandi Matrix <i class="bi bi-box-arrow-up-right ms-1"></i></a>
+        </div>
+      </div>
+
+      <div class="table-responsive mb-4">
+        <table class="table table-hover align-middle border">
+          <thead class="table-light">
+            <tr>
+              <th>Commodity Name</th>
+              <th>Mandi / APMC Center</th>
+              <th>Min Price</th>
+              <th>Max Price</th>
+              <th>Modal (Average) Price</th>
+              <th>Trend</th>
+              <th>Share</th>
+            </tr>
+          </thead>
+          <tbody id="homeMandiTableBody">
+            <!-- Populated via script -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS SECTION (Added: Real Feedback from Farmers & Landowners) -->
+  <section class="py-5 bg-light-subtle">
+    <div class="container">
+      <div class="text-center max-w-700 mx-auto mb-5">
+        <span class="badge bg-success bg-opacity-10 text-success px-3 py-1 rounded-pill fw-bold mb-2">COMMUNITY TRUST</span>
+        <h2 class="fw-bold text-dark">What Farmers & Landowners Say</h2>
+        <p class="text-muted">Real stories of unproductive fallow lands turned into high-yielding agricultural ventures.</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="testimonial-card">
+            <div class="rating-stars mb-3">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+            <p class="text-muted flex-grow-1 small" style="line-height: 1.7;">
+              "I work in Delhi IT sector and had 5.5 acres of ancestral land lying fallow in Meerut. KrishiConnect helped me find an honest cultivator and drafted a 70/30 profit sharing agreement. My land is thriving again!"
+            </p>
+            <div class="d-flex align-items-center gap-3 pt-3 border-top mt-auto">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" alt="Rameshwar Sharma" class="testimonial-avatar">
+              <div>
+                <h6 class="fw-bold mb-0 text-dark">Rameshwar Sharma</h6>
+                <small class="text-muted">Landowner (Migrated to Delhi)</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="testimonial-card">
+            <div class="rating-stars mb-3">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+            <p class="text-muted flex-grow-1 small" style="line-height: 1.7;">
+              "We had modern tractors and drip irrigation equipment but not enough fertile land. Through KrishiConnect, we leased 8 acres in Bulandshahr and harvested record Basmati paddy crop this season."
+            </p>
+            <div class="d-flex align-items-center gap-3 pt-3 border-top mt-auto">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" alt="Sardar Baljit Singh" class="testimonial-avatar">
+              <div>
+                <h6 class="fw-bold mb-0 text-dark">Sardar Baljit Singh</h6>
+                <small class="text-muted">Cultivator & Grain Producer, Hapur</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="testimonial-card">
+            <div class="rating-stars mb-3">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill-half"></i>
+            </div>
+            <p class="text-muted flex-grow-1 small" style="line-height: 1.7;">
+              "Selling pure Vedic bilona cow ghee directly to retail buyers through the Krishi Marketplace doubled our dairy farm profits compared to local middleman APMC rates. Truly transformative."
+            </p>
+            <div class="d-flex align-items-center gap-3 pt-3 border-top mt-auto">
+              <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=400&q=80" alt="Govardhan Dairy" class="testimonial-avatar">
+              <div>
+                <h6 class="fw-bold mb-0 text-dark">Sunita Devi</h6>
+                <small class="text-muted">Organic Dairy Cultivator, Mathura</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT US SECTION (Added: Institutional Inquiries & Farmer Support) -->
+  <section class="py-5 bg-white border-top">
+    <div class="container">
+      <div class="row g-4 align-items-center">
+        <div class="col-lg-5">
+          <span class="badge bg-success bg-opacity-10 text-success px-3 py-1 rounded-pill fw-bold mb-2">GET IN TOUCH</span>
+          <h2 class="fw-bold text-dark mb-3">Contact KrishiConnect Support & Academic Desk</h2>
+          <p class="text-muted mb-4">
+            Have questions regarding land verification, lease agreement terms, produce listing, or technical feedback? Our student and faculty support team is here to assist.
+          </p>
+
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex align-items-center gap-3">
+              <div class="contact-icon-box"><i class="bi bi-geo-alt-fill"></i></div>
+              <div>
+                <div class="fw-bold text-dark">Institutional Headquarters</div>
+                <div class="small text-muted">Department of CSE, Lloyd Institute of Engineering & Technology, Greater Noida, UP 201306</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+              <div class="contact-icon-box"><i class="bi bi-envelope-fill"></i></div>
+              <div>
+                <div class="fw-bold text-dark">Academic & Project Email</div>
+                <div class="small text-muted">support@krishiconnect.edu • bhawna.2501@liet.in</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+              <div class="contact-icon-box"><i class="bi bi-telephone-fill"></i></div>
+              <div>
+                <div class="fw-bold text-dark">Farmer Support Helpline</div>
+                <div class="small text-muted">+91 98765 43210 (Mon - Sat, 9:00 AM - 6:00 PM IST)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="contact-card">
+            <h4 class="fw-bold text-success mb-2"><i class="bi bi-chat-left-dots-fill me-2"></i>Send an Inquiry or Feedback</h4>
+            <p class="text-muted small mb-4">Fill out this quick form and we will connect with you via SMS or WhatsApp.</p>
+
+            <form onsubmit="handleContactSubmit(event)">
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">Your Full Name</label>
+                  <input type="text" id="contactName" class="form-control" placeholder="e.g. Ramesh Patel" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">Mobile Number</label>
+                  <input type="tel" id="contactPhone" class="form-control" placeholder="+91 XXXXX XXXXX" required>
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">Your Role</label>
+                  <select id="contactRole" class="form-select">
+                    <option value="Farmer / Cultivator">Farmer / Cultivator</option>
+                    <option value="Landowner">Agricultural Landowner</option>
+                    <option value="Produce Buyer">Produce Buyer / Retailer</option>
+                    <option value="Academic Evaluator">Faculty / Academic Evaluator</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">Subject</label>
+                  <input type="text" id="contactSubject" class="form-control" placeholder="e.g. Land Verification / Agreement Query" required>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Your Message</label>
+                <textarea id="contactMessage" class="form-control" rows="3" placeholder="Tell us how we can assist you..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-farm-primary px-4 py-2">
+                <i class="bi bi-send-fill me-2"></i> Submit Inquiry
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pre-configured Credentials Demo Banner -->
+  <section class="py-4 bg-success bg-opacity-10 border-top border-bottom border-success border-opacity-25">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h5 class="fw-bold text-success mb-1"><i class="bi bi-key-fill me-2"></i>Quick One-Click Demo Credentials</h5>
+          <p class="mb-0 text-muted small">Test the platform as Landowner, Farmer, Buyer or Administrator without typing passwords.</p>
+        </div>
+        <div class="col-lg-4 text-center text-lg-end mt-3 mt-lg-0">
+          <a href="pages/login.html" class="btn btn-farm-primary w-100 w-lg-auto">
+            Try Demo Accounts <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mandi Rate Alert Modal -->
+  <div class="modal fade" id="mandiAlertModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-bell-fill me-2"></i>Set Daily Mandi Rate SMS / WhatsApp Alert</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form onsubmit="saveMandiAlert(event)">
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Crop / Commodity</label>
+              <select id="alertCrop" class="form-select">
+                <option value="Wheat">Wheat (Gehun)</option>
+                <option value="Basmati Paddy">Basmati Paddy (Dhan)</option>
+                <option value="Mustard">Mustard (Sarson)</option>
+                <option value="Potato">Potato (Aloo)</option>
+                <option value="Tomato">Tomato (Tamatar)</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Target Price Threshold (₹ / Quintal)</label>
+              <input type="number" id="alertTargetPrice" class="form-control" placeholder="e.g. 2600" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Mobile Number for WhatsApp / SMS Alert</label>
+              <input type="tel" id="alertMobile" class="form-control" placeholder="+91 XXXXX XXXXX" required>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-farm-primary rounded-pill">Activate Rate Alert</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="brand-logo text-white mb-3">
+            <i class="bi bi-flower1 text-success"></i> Krishi<span style="color:#e76f51;">Connect</span>
+          </div>
+          <p class="text-secondary small">
+            KrishiConnect is an academic web-based prototype designed to connect unused agricultural landowners with cultivators, provide structured land-use agreements, and enable direct farm produce commerce.
+          </p>
+          <div class="d-flex gap-2">
+            <span class="badge bg-secondary">B.Tech CSE Mini Project</span>
+            <span class="badge bg-success">Session 2026–27</span>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-6">
+          <h6 class="text-white fw-bold mb-3">Quick Links</h6>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="pages/land-search.html">Find Agricultural Land</a></li>
+            <li><a href="pages/marketplace.html">Agri Marketplace</a></li>
+            <li><a href="pages/mandi-prices.html">Mandi Rate Watch</a></li>
+            <li><a href="pages/agreements.html">Land-Use Agreements</a></li>
+            <li><a href="pages/dashboard.html">Role Dashboard</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <h6 class="text-white fw-bold mb-3">Synopsis Details</h6>
+          <ul class="list-unstyled small text-secondary d-flex flex-column gap-1">
+            <li><strong>Candidate:</strong> Bhawna</li>
+            <li><strong>Roll No:</strong> 2501720100045 (Sec: 2C)</li>
+            <li><strong>Supervisor:</strong> Mr. Akshay Kumar (Asst. Prof)</li>
+            <li><strong>Dept:</strong> Computer Science & Engineering</li>
+            <li><strong>Institute:</strong> Lloyd Inst. of Engg. & Tech.</li>
+            <li><strong>Affiliation:</strong> AKTU, Lucknow, UP</li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <h6 class="text-white fw-bold mb-3">Institutional Reference</h6>
+          <p class="small text-secondary mb-2">Plot No. 3, Knowledge Park II, Greater Noida, UP 201306</p>
+          <div class="p-3 rounded-3 bg-white bg-opacity-10 border border-white border-opacity-10">
+            <div class="fw-semibold text-warning small mb-1"><i class="bi bi-shield-check me-1"></i>NITI Aayog Model Act</div>
+            <div class="text-secondary" style="font-size:0.75rem;">Based on Agricultural Land Leasing Guidelines & e-NAM market transparency principles.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom text-center text-secondary">
+        <p class="mb-0">© 2026 KrishiConnect - Department of Computer Science & Engineering, Lloyd Institute of Engineering & Technology.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Main Core JS -->
+  <script src="js/app.js"></script>
+  <!-- Gemini AI Chatbot Engine -->
+  <script src="js/gemini-chat.js"></script>
+  <script>
+    let homeMap;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initLeafletMap();
+
+      // Render Featured Lands (6 verified cards)
+      const landsContainer = document.getElementById("homeLandsContainer");
+      const lands = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.LANDS)) || DEFAULT_LANDS;
+      
+      if (landsContainer && lands.length > 0) {
+        landsContainer.innerHTML = lands.slice(0, 6).map(land => `
+          <div class="col-lg-4 col-md-6">
+            <div class="land-card h-100 position-relative">
+              <span class="land-badge ${land.verified ? 'badge-verified' : 'badge-available'}">
+                ${land.verified ? '<i class="bi bi-patch-check-fill me-1"></i> Verified Land' : 'Listed'}
+              </span>
+              <img src="${land.image}" alt="${land.title}" class="w-100" style="height: 220px; object-fit: cover;">
+              <div class="p-4 d-flex flex-column">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="badge bg-light text-dark border"><i class="bi bi-rulers me-1"></i>${land.area}</span>
+                  <span class="text-success fw-bold small"><i class="bi bi-droplet-half me-1"></i>${land.waterSource.split('&')[0]}</span>
+                </div>
+                <h5 class="fw-bold mb-2">${land.title}</h5>
+                <p class="text-muted small mb-3"><i class="bi bi-geo-alt-fill text-danger me-1"></i>${land.location}</p>
+                <div class="bg-light p-3 rounded-3 mb-3 small">
+                  <div><strong>Suitable For:</strong> ${land.suitableCrops}</div>
+                  <div><strong>Soil Health:</strong> pH ${land.soilHealth ? land.soilHealth.ph : '7.0'} (${land.soilType})</div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between pt-2 border-top mt-auto">
+                  <div>
+                    <span class="text-muted d-block" style="font-size:0.75rem;">Expected Lease</span>
+                    <span class="price-tag fs-6">${land.expectedPrice}</span>
+                  </div>
+                  <div class="d-flex gap-1">
+                    <button class="btn btn-outline-success btn-sm" onclick="shareOnWhatsApp('${land.title}', 'Location: ${land.location} | Area: ${land.area} | Price: ${land.expectedPrice}')" title="Share via WhatsApp">
+                      <i class="bi bi-whatsapp"></i>
+                    </button>
+                    <a href="pages/land-search.html" class="btn btn-farm-primary btn-sm px-3">
+                      View & Apply
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Render Marketplace Showcase (8 verified produce cards)
+      const productsContainer = document.getElementById("homeProductsContainer");
+      const products = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.PRODUCTS)) || DEFAULT_PRODUCTS;
+      
+      if (productsContainer && products.length > 0) {
+        productsContainer.innerHTML = products.slice(0, 8).map(prod => `
+          <div class="col-lg-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+              <div class="position-relative">
+                <img src="${prod.image}" alt="${prod.name}" class="w-100" style="height: 190px; object-fit: cover;">
+                <span class="badge bg-success position-absolute top-0 end-0 m-3 rounded-pill">${prod.category}</span>
+              </div>
+              <div class="p-3 d-flex flex-column">
+                <small class="text-muted mb-1"><i class="bi bi-person me-1"></i>${prod.farmerName}</small>
+                <h6 class="fw-bold mb-2 text-truncate">${prod.name}</h6>
+                <div class="d-flex align-items-baseline gap-1 mb-3">
+                  <span class="fs-5 fw-extrabold text-success">₹ ${prod.price}</span>
+                  <span class="text-muted small">/${prod.unit}</span>
+                </div>
+                <div class="mt-auto d-flex gap-2">
+                  <a href="pages/marketplace.html" class="btn btn-outline-success btn-sm w-100 rounded-pill">
+                    <i class="bi bi-cart-plus me-1"></i> Buy Fresh
+                  </a>
+                  <button class="btn btn-outline-secondary btn-sm rounded-circle px-2" onclick="shareOnWhatsApp('${prod.name}', 'Fresh farm produce at ₹ ${prod.price}/${prod.unit} from ${prod.farmerName}')">
+                    <i class="bi bi-whatsapp"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Render Mandi Table
+      const mandiTable = document.getElementById("homeMandiTableBody");
+      const prices = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.PRICES)) || DEFAULT_MANDI_PRICES;
+      if (mandiTable && prices.length > 0) {
+        mandiTable.innerHTML = prices.slice(0, 5).map(item => `
+          <tr>
+            <td class="fw-bold"><i class="bi bi-tag-fill text-success me-2"></i>${item.commodity}</td>
+            <td class="text-muted">${item.mandi}</td>
+            <td>${item.minPrice}</td>
+            <td>${item.maxPrice}</td>
+            <td class="fw-bold text-success">${item.modalPrice}</td>
+            <td>
+              <span class="${item.trend === 'up' ? 'price-trend-up' : item.trend === 'down' ? 'price-trend-down' : 'text-muted'}">
+                <i class="bi ${item.trend === 'up' ? 'bi-arrow-up-right' : item.trend === 'down' ? 'bi-arrow-down-right' : 'bi-dash'}"></i>
+                ${item.change}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-success py-0 px-2 rounded-pill" onclick="shareOnWhatsApp('Mandi Rate: ${item.commodity}', 'Rate at ${item.mandi}: Modal ${item.modalPrice} (${item.trend.toUpperCase()})')">
+                <i class="bi bi-whatsapp"></i>
+              </button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      runYieldCalculation();
+    });
+
+    function initLeafletMap() {
+      const mapElem = document.getElementById("krishiMapContainer");
+      if (!mapElem) return;
+
+      homeMap = L.map('krishiMapContainer').setView([28.4500, 77.7500], 9);
+
+      // Dual Map Layers: Clean Topographic & Satellite Farmland View
+      const topoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+      });
+
+      const satelliteLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+      });
+
+      topoLayer.addTo(homeMap);
+
+      L.control.layers({
+        "Agricultural Topo Map": topoLayer,
+        "Dark Farmland View": satelliteLayer
+      }, null, { position: 'topright' }).addTo(homeMap);
+
+      const lands = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.LANDS)) || DEFAULT_LANDS;
+
+      lands.forEach(land => {
+        if (land.lat && land.lng) {
+          const marker = L.marker([land.lat, land.lng]).addTo(homeMap);
+          marker.bindPopup(`
+            <div style="font-family:'Outfit',sans-serif; max-width:240px;">
+              <h6 style="font-weight:700; margin-bottom:4px; color:#2d6a4f;">${land.title}</h6>
+              <div style="font-size:0.8rem; color:#64748b; margin-bottom:6px;"><i class="bi bi-geo-alt-fill text-danger"></i> ${land.location}</div>
+              <div style="font-size:0.8rem; margin-bottom:8px;"><strong>Area:</strong> ${land.area} | <strong>Soil:</strong> ${land.soilType}</div>
+              <div style="font-size:0.85rem; font-weight:700; color:#1b4332; margin-bottom:8px;">${land.expectedPrice}</div>
+              <a href="pages/land-search.html" class="btn btn-sm btn-success w-100" style="border-radius:20px; font-size:0.75rem;">Apply for Cultivation</a>
+            </div>
+          `);
+        }
+      });
+    }
+
+    function centerMapOnUP() {
+      if (homeMap) homeMap.setView([28.4500, 77.7500], 9);
+    }
+
+    function runYieldCalculation() {
+      const acres = parseFloat(document.getElementById("calcAcres").value) || 1;
+      const cropSelect = document.getElementById("calcCrop");
+      const selectedOption = cropSelect.options[cropSelect.selectedIndex];
+      const yieldPerAcre = parseFloat(selectedOption.getAttribute("data-yield"));
+      const pricePerQtl = parseFloat(selectedOption.getAttribute("data-price"));
+      const costPerAcre = parseFloat(selectedOption.getAttribute("data-cost"));
+      const model = document.getElementById("calcModel").value;
+
+      const calc = calculateProfitShare(acres, cropSelect.value, model, yieldPerAcre, pricePerQtl, costPerAcre);
+
+      document.getElementById("resGross").innerText = `₹ ${calc.grossRevenue.toLocaleString('en-IN')}`;
+      document.getElementById("resCost").innerText = `₹ ${calc.totalCost.toLocaleString('en-IN')}`;
+      document.getElementById("resNet").innerText = `₹ ${calc.netProfit.toLocaleString('en-IN')}`;
+      document.getElementById("resFarmerShare").innerText = `₹ ${calc.farmerShare.toLocaleString('en-IN')}`;
+      document.getElementById("resOwnerShare").innerText = `₹ ${calc.ownerShare.toLocaleString('en-IN')}`;
+    }
+
+    function triggerVoiceHelp() {
+      const speechText = "नमस्ते किसान भाइयों। कृषि कनेक्ट में आपका स्वागत है। यहाँ आप खाली पड़ी खेती की ज़मीन ढूंढ सकते हैं, मंडी भाव देख सकते हैं और अपनी फसल सीधे बेच सकते हैं।";
+      speakKrishiAdvice(speechText);
+    }
+
+    function openPriceAlertModal() {
+      const modal = new bootstrap.Modal(document.getElementById("mandiAlertModal"));
+      modal.show();
+    }
+
+    function saveMandiAlert(e) {
+      e.preventDefault();
+      const crop = document.getElementById("alertCrop").value;
+      const target = document.getElementById("alertTargetPrice").value;
+      const phone = document.getElementById("alertMobile").value;
+
+      const alerts = JSON.parse(localStorage.getItem(KRISHI_STORAGE_KEYS.PRICE_ALERTS)) || [];
+      alerts.push({ crop, target, phone, date: new Date().toLocaleDateString() });
+      localStorage.setItem(KRISHI_STORAGE_KEYS.PRICE_ALERTS, JSON.stringify(alerts));
+
+      bootstrap.Modal.getInstance(document.getElementById("mandiAlertModal")).hide();
+      showToast(`Mandi alert active for ${crop} at ₹ ${target}! Notification will be sent to ${phone}.`, "success");
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("contactName").value;
+      const phone = document.getElementById("contactPhone").value;
+      const subject = document.getElementById("contactSubject").value;
+
+      showToast(`Thank you, ${name}! Your inquiry regarding "${subject}" has been received. Our team will contact you at ${phone}.`, "success");
+      e.target.reset();
+    }
+  </script>
+</body>
+</html>
